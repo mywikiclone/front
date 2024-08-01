@@ -1,5 +1,5 @@
 
-import MenuBar from "../../components/test"
+import MenuBar from "../../components/editmain"
 
 const Main=()=>{
 

@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import "./globals.css";
+import './globals.css'
 
 import Link from "next/link"
 
@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className='navbar'>
+        <div className="navbar">
         <Link href="/">나무위키</Link>
         <Link href="/pages/changed">최근변경</Link>
         <Link href="/pages/arg">최근토론</Link>
@@ -34,3 +34,8 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+
+//bg-green-500 justify-between relative p-[5px] pl-[300px] font-black
+//justifty-center rounded-10p border-green-500 bg-white w-[45px] h-[45px] ml-[450px]
+//
