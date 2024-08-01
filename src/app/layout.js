@@ -1,6 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 
+import Link from "next/link"
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -11,7 +13,24 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className='navbar'>
+        <Link href="/">나무위키</Link>
+        <Link href="/pages/changed">최근변경</Link>
+        <Link href="/pages/arg">최근토론</Link>
+        <a>특수기능</a>
+        {/* <ul className="hide">
+          <ui>q</ui>
+          <ui>q</ui>
+          <ui>q</ui>
+          <ui>q</ui>
+        </ul>
+         */}
+        <button className="randomBtn">⟳</button>
+        <input className="search" placeholder="   여기에서 검색"></input>
+        </div>
+
+        {children}</body>
     </html>
   );
 }

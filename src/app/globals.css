@@ -31,3 +31,63 @@ body {
     text-wrap: balance;
   }
 }
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(247, 244, 244);
+}
+
+.navbar {
+  background-color:lightseagreen;
+
+  position: relative;
+  justify-content: space-between;
+
+
+  padding:  5px;
+  padding-left: 300px;
+  font-weight: 900;
+}
+
+.navbar a {
+  margin-right: 60px;
+  color: white;
+ 
+  text-decoration: none;
+}
+
+.hide{
+  cursor: pointer;
+}
+
+
+
+.randomBtn {
+
+  justify-content: center;
+  border-radius: 10%;
+  border-color: lightseagreen;
+  background-color: white;
+
+
+  width: 45px;
+  height: 45px;
+  margin-left: 450px;
+}
+
+.search {
+  width: 250px;
+  height: 35px;
+  
+  margin-left: 10px;
+}
+
