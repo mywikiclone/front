@@ -1,14 +1,15 @@
 
 import MenuBar from "../../components/editmain"
-
+import RootLayout from "@/app/layout";
 const Main=()=>{
 
 
     return(
-        <div className="w-full h-screen bg-white">
+       
             <MenuBar/>
+   
 
-        </div>
+      
     )
 
 
@@ -17,3 +18,9 @@ const Main=()=>{
 
 
 export default Main;
+
+/*<div className="w-full h-screen bg-white">
+<MenuBar/>
+
+</div>
+*/

@@ -236,7 +236,7 @@ const MenuBar = () => {
     fir_box.className=`row_box my-[1px] flex`
     //fir_box.id=`${row_number+1}`
 
-    second_box.className="row_box_num w-[20px] h-[30px] bg-blue-200 border-2"
+    second_box.className=" text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]"
     second_box.textContent=`${row_number+1}`
     Array.from(row_number_div_arr).map(x=>{
       if(Number(x.textContent)>row_number){
@@ -255,7 +255,7 @@ const MenuBar = () => {
    //third_box.setAttribute("data-id",`${row_number+1}`)
     third_box.id=`${row_number+1}`
     third_box.spellcheck=false
-    third_box.className="texts w-[590px] h-[30px]  bg-slate-300  resize-none outline-0"
+    third_box.className="texts w-full h-[30px]  bg-slate-300  resize-none outline-0 text-[15px]"
     third_box.rows="1";
     third_box.addEventListener("keydown",add_row_num)
     third_box.addEventListener("input",textarea_auto_sizing)
@@ -333,6 +333,15 @@ const MenuBar = () => {
     }
 
   }
+  const save_text=(event)=>{
+    let targets=event.target.parentElement.parentElement.children[2].children;
+    let strs=""
+    Array.from(targets).map(x=>{
+      
+      strs+=x.children[1].value+"\n"
+    })
+    //api 로 strs보내기!
+  }
 
 
 
@@ -358,8 +367,20 @@ const MenuBar = () => {
 
 
   return (
-    <div className="w-full h-[200px] bg-white ">
-      <div className="flex w-1/2 h-[25px] bg-blue-200 justify-evenly ">
+    <div className="flex h-screen justify-center items-center">
+    <div className=" flex flex-col  items-center border-[2px] text-[24px] w-full h-95p">
+      <div className="w-90p text-left h-[75px] bg-blue-200 text-[50px]">dhzzzz</div>
+      <div className="flex justify-center w-90p h-[50px] bg-blue-200">
+        <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
+      <button onClick={()=>show_window()} className="text-[20px]">
+          미리보기
+        </button>
+        <button  className="text-[20px]"onClick={()=>show_compiler()}>
+          편집기
+        </button>
+        </div>
+        <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
+       
         <button
           onClick={() => func("bold")}
     
@@ -391,33 +412,29 @@ const MenuBar = () => {
 
 
 
-        <button onClick={()=>show_window()}>
-          미리보기
-        </button>
-        <button onClick={()=>show_compiler()}>
-          편집기
-        </button>
+
+
+        </div>
 
       </div>
-
 
 
 
       {
         show_preview ?  <Preview text={preview_text}/>:
         (
-          <div id="text_box" className="flex flex-col w-[621px] h-[500px] overflow-auto bg-blue-100">
+          <div id="text_box" className="flex flex-col w-90p h-55p overflow-auto bg-blue-100">
 
           { default_view ? (
         
           <div id="fir" className="row_box my-[1px] flex">
-            <div className="row_box_num w-[20px] h-[30px] bg-blue-200 border-2">
+            <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
                 1
             </div>
             <textarea  id='1' spellCheck='false' rows={1} onInput={(event)=>textarea_auto_sizing(event)}  
             onKeyDown={(event)=>add_row_num(event)}
             onClick={(event)=>set_current_num(event)}
-            className="texts w-[590px] h-[30px]  bg-slate-300 resize-none outline-0"
+            className="texts w-full h-[30px]  bg-slate-300 resize-none outline-0 text-[15px]"
             >       
             
             </textarea>
@@ -426,13 +443,13 @@ const MenuBar = () => {
               compiler_data.current.map((x)=>(
               
               <div key={x["id"]} className="row_box my-[1px] flex">
-                  <div className="row_box_num w-[20px] h-[30px] bg-blue-200 border-2">
+                  <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
                         {x["id"]}
                   </div>
                   <textarea  id={x["id"]} spellCheck='false'rows={1}  onInput={(event)=>textarea_auto_sizing(event)}  
                       onKeyDown={(event)=>add_row_num(event)}
                       onClick={(event)=>set_current_num(event)}
-                      className={`texts w-[590px] height-[30px] bg-slate-300 resize-none outline-0`}
+                      className="texts w-full h-[30px]  bg-slate-300 resize-none outline-0 text-[15px]"
                        >    
                   </textarea>
               </div>
@@ -444,16 +461,20 @@ const MenuBar = () => {
 
 
           }
-            </div>
+          </div>
 
           
       )
       }
+      <div className="w-90p flex justify-end ">
+      <button  onClick={(event)=>save_text(event)}className="border-[2px] border-solid border-slate-200 bg-blue-100">저장하기</button>
+      </div>
+    </div>
     </div>
   )
 
 }
-
+//w-full h-[200px] bg-white
 
 
 export default MenuBar;
