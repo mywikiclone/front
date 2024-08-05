@@ -43,7 +43,7 @@ const change_img=(event)=>{
 
 
     return(
-    <div  id="text_box" className="w-[621px] h-[500px] overflow-auto bg-blue-100">
+    <div  id="text_box" className="flex flex-col w-90p h-55p overflow-auto bg-blue-100">
 
 
     </div>
