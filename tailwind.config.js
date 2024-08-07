@@ -10,6 +10,7 @@ module.exports = {
       borderRadius:{
         '1p':"1%",
         '3p':'3%',
+        "7p":"7p",
         '50p':'50%',
         '10p':'10%'
       },

@@ -3,6 +3,7 @@ import './globals.css'
 import RealTime from "./components/realtime";
 import Link from "next/link"
 import RealTimeIssue from "./components/realtimeissuse";
+import Search_box from "./components/search_box";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -22,7 +23,8 @@ return (
     <Link href="/pages/arg">최근토론</Link>
     <a>특수기능</a>
      <button className="randomBtn">⟳</button>
-     <input className="search" placeholder="   여기에서 검색"></input>
+   
+     <Search_box/>
      </div>
  
    <div className="flex h-screen justify-center items-center">   
@@ -56,6 +58,9 @@ return (
 }
 
 export default RootLayout
+
+
+// <input className="search" placeholder="   여기에서 검색"></input>
 
 
 
