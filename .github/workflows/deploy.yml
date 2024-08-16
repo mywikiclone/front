@@ -25,8 +25,8 @@ jobs:
 
 
 
-	####################
-	#js요? 바꿔야댐
+	# -------------------------------------
+
 
       - uses: actions/setup-java@v4 # java 세팅, temurin 의 17버전
         with:
@@ -45,8 +45,7 @@ jobs:
       - name: Build with Gradle     # 내려 받은 코드 빌드
         run: ./gradlew clean build -x test
 
-	########################
-
+	# -----------------------------------------
 
 	
 
