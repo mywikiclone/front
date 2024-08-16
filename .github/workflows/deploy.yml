@@ -41,8 +41,8 @@ jobs:
         run: chmod +x ./gradlew # gradlew 명령어 권한 부여
         shell: bash
  
-      - name: Build with Gradle     # 내려 받은 코드 빌드
-        run: ./gradlew clean build -x test
+      #- name: Build with Gradle     # 내려 받은 코드 빌드
+       # run: ./gradlew clean build -x test
 
 
 
