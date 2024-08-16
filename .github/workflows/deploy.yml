@@ -38,7 +38,8 @@ jobs:
         shell: bash
  
       - name: Build with Gradle     # 내려 받은 코드 빌드
-	 run: ./gradlew clean build -x test
+	run: ./gradlew clean build -x test
+
 
 
 
