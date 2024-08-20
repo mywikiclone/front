@@ -1,10 +1,31 @@
-"use client"
 
 import React,{useEffect,useState,useRef} from 'react'
-import Preview from "./preview"
-import { Zen_Tokyo_Zoo } from 'next/font/google'
+//import Preview from "./preview"
+import { Pridi, Zen_Tokyo_Zoo } from 'next/font/google'
+import { useRouter } from "next/navigation"
+import { useSelector,useDispatch } from "react-redux"
+import dynamic from 'next/dynamic'
+
+
+
 //import './style.scss'
-const MenuBar = () => {
+const Edit_By_Id = ({content_id}) => {
+
+
+
+  const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
+
+
+  const DnynamicPreview=dynamic(()=>import('../components/preview'),{loading:()=><div>...loading</div>,ssr:false})
+  //<Preview text={preview_text}/>
+  const current_content=useSelector((state)=>state.current_content);
+  const dispatch=useDispatch();
+
+  let test=[];
+
+  let ex=current_content.content.split("/n");
+
+  const route=useRouter();
   const tags_for_edit={
     bold:"<b></b>",
     strike:"<s></s>",
@@ -18,9 +39,11 @@ const MenuBar = () => {
   const current_small_list_box=useRef(null);
   const [show_preview,set_show_preivew]=useState(false);
   const [preview_text,set_preview_text]=useState("");
+  const [titles,set_titles]=useState("");
   const [compiler_text,set_compiler_text]=useState([])
   const compiler_data=useRef();
   const [default_view,set_deafult_view]=useState(true);
+  const [start_text,set_start_text]=useState([]);
   const set_current_num=(event)=>{
      // set_current_box(Number(event.target.id))
      current_box.current=Number(event.target.id)
@@ -184,7 +207,7 @@ const MenuBar = () => {
     }
     set_preview_text(strs)
     set_show_preivew(true)
-    set_deafult_view(true)
+    set_deafult_view(false)
     
     } 
   }
@@ -213,7 +236,6 @@ const MenuBar = () => {
     let doc=event.target;
     doc.style.height="auto"
     //console.log(doc.height);
-    //console.log(doc.scrollHeight);
     let x=doc.scrollHeight+"px"
     doc.style.height=x;
   }
@@ -333,43 +355,147 @@ const MenuBar = () => {
     }
 
   }
-  const save_text=(event)=>{
+  const save_text=async (event)=>{
     let targets=event.target.parentElement.parentElement.children[2].children;
     let strs=""
     Array.from(targets).map(x=>{
       
       strs+=x.children[1].value+"\n"
     })
+    console.log("strs and title:",strs,titles);
     //api 로 strs보내기!
+
+    let res=await fetch("/api/update",{method:"POST"
+        ,headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJpYXQiOjE3MjM3MjQ4OTcsImV4cCI6MTcyMzcyNDk2MH0.YXNRWG0MriSkYGT6WofD5-pY0XyQMKsRrX2lA8IQkBw"
+        },body:JSON.stringify({content_id:content_id,title:titles,content:strs})
+    })
+   
+    if(res.ok){
+        console.log("저장진행성공!")
+
+
+        dispatch({type:"Change_content",content:{
+          content_id:content_id,
+          title:titles,
+          content:strs
+        }})
+        route.push(`/currentversion/${encodeURIComponent(titles)}`)
+
+
+    }
+    
   }
 
+  const setting_start_text=async(id)=>{
+    /*let datas=await fetch(`/api/search/id/${id}`,{method:"GET"})
+    .then((res)=>{return res.json();})
+    .then((res)=>{return res.data})*/
+   // console.log("id값 타입:",typeof(id),typeof(current_content.content_id));
+   let datas="";
+    if(Number(id)!==current_content.content_id){
+      datas=await fetch(`${back_end_url}search/id/${id}`,{
+          method:"GET"
+      })
+      .then((res)=>{
+          return res.json();
+      })
+      .then((res)=>{
+          return res.data;
+      })
+      console.log("datas:",datas);
+
+      //{content_id,title,content 로구성됨.}
 
 
-  useEffect(()=>{
-    console.log("useeffect:",default_view)
-    if(default_view===false){
-    let docs=document.getElementsByClassName("texts")
-    Array.from(docs).map((x,idx)=>{
 
-      //굳이 이렇게말고 아래의 태그에서 defaultvaluje를 설쟁해줘도 똑같이 돌아간다.
-      x.value=compiler_data.current[idx]["text"]
-      console.log(x.scrollHeight)
-      
-      x.style.height="auto"
+      dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content,content_arr:datas.content.split("\n")}})
+      //dispatch({type:"Change_Content",content:datas})
+      console.log("dispatch in edit");
+      set_start_text(datas.content.split("\n"))
+  
 
-      x.style.height=x.scrollHeight+"px"
-      
+    }
+    else{
+      datas=current_content.content;
+      console.log("datas:",datas);
+  
+      set_start_text(datas.split("\n"))
+    }
+
+    //왜인지는 모르겟는대 아래맵에서 start_text를 참조하지않고 reducr의 current_content의 content혹은 current_content.content.split(~~) 혹은 content_arr
+    //를 참조하는 map을 넣어도 첫번쨰 값은 항상 이전 state값이 유지가된다. current_content자체는 업데이트가 잘되는대
+    //영문을 모르겠다. useeffect에다가 current_content를 넣은것을 주석을 해제하면 분명
+    //useeffect가 2번 작동하나 그럼에도 불구하고 첫번쨰값은 그대로 이전 reducer의 상태값을 가져온다 ,..왜지???
+    
+
+    //진짜모르겟다 여기함수의 set함수를 지워놓고 아래의 current_content를 의존성 배열로갖느,ㄴ useeffect를 해제해도
+    //첫번쨰값은 무조건이전state값이 달려나온다 나머지값은 바뀐값으로 나오는대...
+    //값자체는 store든 state는 업데이트가되는대 랜더링 되는 화면이상핟. useeffect는 정상작동하고 왜지..?
+    //reducer->state로가는 시간차가 머ㅜㄴ가있나??그렇다쳐도 current_content자체가 바뀌는 상황인대 처음부터 재랜더링되는게맞지않나?
+    console.log("somethingtocheck");
+
+    
+
+    /*let sts=current_content.content.split("\n")
+  
+    let sts=datas.content.split("\n");
+    console.log("얻어온 데이터를 \n기준으로 나눈거:",sts)
+    sts.map((x,idx)=>{
+
+
+        set_start_text((prev)=>[...prev,{id:idx,text:x}])
+
 
     })
+    set_titles(datas.title);
+    set_titles(current_content.title);*/
   }
 
-  },[default_view])
+  useEffect(()=>{
+    
+    setting_start_text(content_id)
+    console.log("default_view:",default_view);
+
+  },[])
+
+
+/*useEffect(()=>{
+
+   let sts=current_content.content.split("\n")
+  
+    //let sts=datas.content.split("\n");
+    console.log("얻어온 데이터를 \n기준으로 나눈거:",sts)
+    set_start_text([])
+    sts.map((x,idx)=>{
+
+        
+        set_start_text((prev)=>[...prev,{id:idx,text:x}])
+        
+
+    })
+    
+    
+    //set_titles(datas.title);
+    set_titles(current_content.title);
+
+    
+    console.log("바뀐 current_content값:",current_content);
+    set_start_text(current_content.content.split("\n"))
+
+
+  },[current_content])*/
+
+
 
 
   return (
     <div className="flex h-screen justify-center items-center">
     <div className=" flex flex-col  items-center border-[2px] text-[24px] w-full h-95p">
-      <div className="w-90p text-left h-[75px] bg-blue-200 text-[50px]">dhzzzz</div>
+      <div className="w-90p text-left h-[75px] bg-blue-200 text-[50px]">{current_content.title}
+       
+      </div>
       <div className="flex justify-center w-90p h-[50px] bg-blue-200">
         <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
       <button onClick={()=>show_window()} className="text-[20px]">
@@ -421,25 +547,33 @@ const MenuBar = () => {
 
 
       {
-        show_preview ?  <Preview text={preview_text}/>:
+        show_preview ?   <DnynamicPreview text={preview_text}/>: 
         (
           <div id="text_box" className="flex flex-col w-90p h-55p overflow-auto bg-blue-100">
 
           { default_view ? 
-          (
-        
-          <div id="fir" className="row_box my-[1px] flex">
-            <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
-                1
-            </div>
-            <textarea  id='1' spellCheck='false' rows={1} onInput={(event)=>textarea_auto_sizing(event)}  
-            onKeyDown={(event)=>add_row_num(event)}
-            onClick={(event)=>set_current_num(event)}
-            className="texts w-full h-[30px]  bg-slate-300 resize-none outline-0 text-[15px]"
-            >       
-            
-            </textarea>
-          </div>) : 
+          
+
+            start_text.map((x,idx)=>(
+                
+                <div key={idx} className="row_box my-[1px]   flex">
+                   <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
+                          {idx}
+                    </div>
+                <textarea  id={idx} spellCheck='false'rows={1}   
+                    onInput={(event)=>textarea_auto_sizing(event)}
+                    onKeyDown={(event)=>add_row_num(event)}
+                    onClick={(event)=>set_current_num(event)}
+                    className="texts w-full   bg-slate-300 resize-none outline-0 text-[15px]"
+                    defaultValue={x} >    
+                </textarea>
+                    
+                </div> 
+  
+                ))
+               
+                  
+             : 
           (
               compiler_data.current.map((x)=>(
               
@@ -447,11 +581,13 @@ const MenuBar = () => {
                   <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
                         {x["id"]}
                   </div>
-                  <textarea  id={x["id"]} spellCheck='false'rows={1}  onInput={(event)=>textarea_auto_sizing(event)}  
+                  <textarea  id={x["id"]} spellCheck='false'rows={1}
+                      onInput={(event)=>textarea_auto_sizing(event)} 
                       onKeyDown={(event)=>add_row_num(event)}
                       onClick={(event)=>set_current_num(event)}
-                      className="texts w-full h-[30px]  bg-slate-300 resize-none outline-0 text-[15px]"
-                       >    
+                      style={{height:x.height}}
+                      className={`texts w-full  bg-slate-300 resize-none outline-0 text-[15px]`}
+                       defaultValue={x["text"]}>    
                   </textarea>
               </div>
 
@@ -478,4 +614,31 @@ const MenuBar = () => {
 //w-full h-[200px] bg-white
 
 
-export default MenuBar;
+/*
+(
+             start_text.length!==0 ?
+            (start_text.map((x)=>(
+                
+                <div key={x["id"]} className="row_box my-[1px] flex">
+                   <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
+                          {x["id"]}
+                    </div>
+                    <textarea  id={x["id"]} spellCheck='false'rows={1}  onInput={(event)=>textarea_auto_sizing(event)}  
+                        onKeyDown={(event)=>add_row_num(event)}
+                        onClick={(event)=>set_current_num(event)}
+                        className="texts w-full h-[30px]  bg-slate-300 resize-none outline-0 text-[15px]"
+                        defaultValue={x["text"]} >    
+                    </textarea>
+                </div> 
+  
+                )))
+                :null
+            
+            )
+
+*/ 
+
+
+
+
+export default Edit_By_Id;

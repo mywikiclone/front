@@ -1,13 +1,14 @@
+"use client"
 
 import MenuBar from "../../components/editmain"
-import RootLayout from "@/app/layout";
+
+
 const Main=()=>{
 
 
     return(
-       
-            <MenuBar/>
-   
+        
+           <MenuBar/>
 
       
     )
