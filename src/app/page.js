@@ -1,14 +1,11 @@
-import Link from "next/link"
-import RealTime from "./components/realtime";
-import Main_Board from "./components/mainboard";
-import RootLayout from "./layout";
 export default function Home() {
+
   return (
       
     <div>
    
-      <Main_Board/>
-      
+      메인페이지입니다. 아직은아무것도없지요?
+     
       
     </div>
     

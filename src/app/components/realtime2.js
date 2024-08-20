@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRef,useEffect,useState } from "react"
 import { motion,AnimatePresence } from 'framer-motion';
-const RealTime=()=>{
+const RealTimeAnother=({data_from_rsc})=>{
 
 
 
@@ -51,7 +51,7 @@ const RealTime=()=>{
     }
     const set_function=()=>{    
 
-        if(current_idx===(realtime_data_from_back.length-1)){
+        if(current_idx===(data_from_rsc.length-1)){
        
             set_current_idx(0)
         }
@@ -73,12 +73,7 @@ const RealTime=()=>{
 
         const fetchdata=async ()=>{
 
-            if(load_fir.current){
-                console.log(load_fir.current)
-                get_data_realtime_issue();
-                load_fir.current=false;
-            }
-
+   
 
             setTimeout(set_function,3000)
 
@@ -105,13 +100,13 @@ const RealTime=()=>{
         transition={{duration:0.5}}
         className="absolute ml-[10px]  w-full text-[20px]"
         key={current_idx}>
-                {realtime_data_from_back.length!==0 ?`${current_idx}${realtime_data_from_back[current_idx].title}` : null}
+                {data_from_rsc.length!==0 ?`${current_idx}${data_from_rsc[current_idx].title}` : null}
           </motion.div>
         </AnimatePresence>
         {
             visible && <div className="w-full h-[200px] bg-white 
             border-solid border-[1px] border-solid border-black rounded-3p z-50">
-                {realtime_data_from_back.map((x,idx)=>
+                {data_from_rsc.map((x,idx)=>
                     <Link key={idx} href={`/currentversion/${encodeURIComponent(x.title)}`}>
                     <div  id={idx} className="w-full my-[5px] ml-[5px] text-[15px]">
 
@@ -135,15 +130,4 @@ const RealTime=()=>{
 
 }
 
-export default RealTime;
-
-/*
-    <div className="flex  justify-start bg-slate-200 w-full h-[35px] border-solid rounded-3p  border-[2px] border-blue-500  ">
-
-        <div ref={docs} id="change_list" className="ml-[10px] text-[20px] hover:w-full hover:h-[200px] hover:bg-white hover:ml-[0px]
-            hover:border-solid hover:border-[1px] hover:border-solid hover:border-black hover:rounded-3p
-            hover:shadow-2xl"  onMouseLeave={(e)=>mouseleave(e)}>0</div>
-    </div>
-
-
-*/
+export default RealTimeAnother;
