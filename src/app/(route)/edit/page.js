@@ -1,7 +1,7 @@
 "use client"
 
 import Edit_Main from "@/app/components/editmains"
-import MenuBar from "../../components/editmain"
+
 
 
 const Main=()=>{
