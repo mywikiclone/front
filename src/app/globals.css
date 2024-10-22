@@ -44,24 +44,24 @@ html, body {
   margin: 0;
   padding: 0;
   background-color: rgb(247, 244, 244);
+ 
 }
 
 .navbar {
   background-color:lightseagreen;
-
+  display:flex;
   position: relative;
-  justify-content: space-between;
-
+  justify-content: center;
   height:55px;
-  padding:  5px;
-  padding-left: 300px;
+  padding:5px;
   font-weight: 900;
+  align-items: center;
 }
 
 .navbar a {
-  margin-right: 60px;
+  
   color: white;
- 
+  margin-right: 20px;
   text-decoration: none;
 }
 
@@ -81,7 +81,7 @@ html, body {
 
   width: 45px;
   height: 45px;
-  margin-left: 450px;
+
 }
 
 .search {

@@ -1,6 +1,6 @@
 "use client"
 import {useEffect} from "react"
-const Preview=({text})=>{
+const EditPreviewTest=({text})=>{
 
    
 const change_img=(event)=>{
@@ -9,7 +9,7 @@ const change_img=(event)=>{
          }
     
     let child_node=event.target.children
-    console.log(child_node,event.target.parentElement,event.target.parentElement.children)
+   // console.log(child_node,event.target.parentElement,event.target.parentElement.children)
            
      if(child_node[0].src==="http://localhost:3000/arrow_down.svg"){
         child_node[0].src="../../../arrow_right.svg"
@@ -24,30 +24,32 @@ const change_img=(event)=>{
     }
     useEffect(()=>{
 
-
-
+       
         console.log("들어갈 text:",text)
         let doc=document.getElementById("text_box")
         doc.innerHTML=text
 
-        let docs=doc.getElementsByClassName("big_area");
-        Array.from(docs).map(x=>{
+        let big_areas=doc.getElementsByClassName("big_area");
+       
+
+        let small_areas=doc.getElementsByClassName("small_area")
+        
+        Array.from(big_areas).map(x=>{
             let header_ul=x.children[0];
+            
 
             header_ul.addEventListener("click",change_img);
-            if(doc.getElementsByClassName("small_area")!==null){
-                let docs2=doc.getElementsByClassName("small_area")
-                Array.from(docs).map((y)=>{
-                    let header_ul=y.children[0];
-                    header_ul.addEventListener("click",change_img)
-                })
-            }
+        })
+        Array.from(small_areas).map(x=>{
+            
+            let small_ul=x.children[0];
+            small_ul.addEventListener("click",change_img);
         })
     },[text])
 
 
     return(
-    <div  id="text_box" className="flex flex-col lg:w-90p w-full h-55p overflow-auto bg-blue-100 ">
+    <div  id="text_box" className="flex flex-col lg:w-90p w-full h-55p overflow-auto bg-blue-100">
 
 
     </div>
@@ -60,4 +62,4 @@ const change_img=(event)=>{
 }
 
 
-export default Preview;
+export default EditPreviewTest;

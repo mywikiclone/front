@@ -1,11 +1,15 @@
 import { combineReducers } from "redux";
 import current_content from "./change_content";
-import login_state from "./login_state";
+import current_discussion from "./discussion";
+import current_search_box from "./searchbox_data";
+import current_userdata from "./userdata";
 
 
 const root_reducer=combineReducers({
     current_content:current_content,
-    login_state:login_state
+    current_discussion:current_discussion,
+    current_search_box:current_search_box,
+    current_userdata:current_userdata
 })
 
 

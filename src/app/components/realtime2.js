@@ -87,7 +87,7 @@ const RealTimeAnother=({data_from_rsc})=>{
 
     
     return(
-        <div className=" relative flex  justify-start bg-slate-200 w-full h-[35px] border-solid rounded-3p  border-[2px]   "
+        <div className=" relative flex  justify-start bg-slate-200 w-full h-[35px]"
         onMouseEnter={(e)=>mosuseover(e)}
         onMouseLeave={(e)=>mouseleave(e)}>
         <AnimatePresence>

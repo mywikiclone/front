@@ -3,26 +3,36 @@
 //자식도 선언해줘야도니다.
 
 import { useState,useEffect,useRef} from "react"
-
+import { makebase64 } from "./action";
 import Link from 'next/link';
 import { Bakbak_One } from "next/font/google";
 import {useSelector,useDispatch} from "react-redux";
 import { useRouter } from "next/navigation"
+import {check_in_db} from "./indexdb"
 
+import { fetching_get_with_no_token } from "./fetching";
+import TextEngine from "./textengine";
 
 const Main_Board=({content_title})=>{
     const router=useRouter();
     const dispatch=useDispatch();
     const current_content=useSelector((state)=>state.current_content);
+    console.log("current_content in mainboard:",current_content);
     const current_box=useRef(1);
     const current_big_list_box=useRef(null);
     const current_small_list_box=useRef(null);
     const [preview_text,set_preview_text]=useState("");
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
-    const [error,seterror]=useState(null);
+    const [error,seterror]=useState(false);
+    const svg_url_arr=["public/star.svg","public/edit.svg","public/history.svg"];
+    const edit=useRef(null);
+    const star=useRef(null);
+    const history=useRef(null);
+    const ref_arr=[star,edit,history]
     //const compiler_data=useRef();
 
-    
+
+ 
 
 
 
@@ -33,149 +43,36 @@ const Main_Board=({content_title})=>{
         event.target.style.borderColor=" #cbd5e1"
     }
 
-    const click_change_window=()=>{
-        console.log("check");
-       
-    }
 
 
-    const show_window=(contents)=>{
-        current_big_list_box.current=null;
-        current_small_list_box.current=null;
-         //compiler_data.current=[];
-        let txtarea=document.getElementsByClassName("texts")
-        let strs=""
-        let reg_exp_big_title=/==.*?==/
-        let reg_exp_small_title=/=.*?=/
-        let strs_list=[]
-        let big_list_and_small_list_relation={}
-        let small_list_num=1;
-        
-        
-        contents.map((x)=>{
+    const show_window=(texts)=>{
+
+   
+      let strs="";
+      let introductions=""
+      let intro_index=""
+      Array.from(texts).map((text)=>{
           
-         // compiler_data.current=[...compiler_data.current,{id:x.id,text:x.value,height:(x.scrollHeight+"px")}]
-          //set_compiler_text(prev=>[...prev,{id:x.id,text:x.value,height:(x.scrollHeight+"px")}])
-          //let texts=x.value.replace(/\n/g,"<br/>");
-          let texts=x;
-          if(texts.match(reg_exp_big_title)!=null){
-          
-    
-            let middletext=texts.split("==")
-            console.log("big:",texts,middletext)
-            current_big_list_box.current=`<div class="big_area w-full h-auto bg-white"><div class="w-full h-auto bg-white"><ul class="w-full h-[50px] border-b-2 border-solid border-gray-300"><img  src="../../../arrow_down.svg" class="pointer-events-none" ></img><a href="https://namu.wiki/w/NGC%205694" target="_blank">??</a>${strs_list.length+1} ${middletext[1]}</ul><div class="w-full h-auto bg-white"></div><end>`
-    
-            strs_list.push(current_big_list_box.current)
-            big_list_and_small_list_relation[strs_list.length-1]=[];
-        
-    
-    
-            current_small_list_box.current=null
-            small_list_num=1
-            return;
-          }
-          else if(texts.match(reg_exp_small_title)!=null){
-    
+        //compiler_data.current=[...compiler_data.current,{id:x.id,text:x.value,height:(x.scrollHeight+"px")}]
      
-            let middletext=texts.split("=")
-            console.log("small:",texts,middletext)
-            current_small_list_box.current=`<div class="small_area w-full h-auto bg-white"><div class="w-full h-auto bg-white"><ul class="w-full h-[50px] border-b-2 border-solid border-gray-300"><img  src="../../../arrow_down.svg" class="pointer-events-none" ></img><a href="https://namu.wiki/w/NGC%205694" target="_blank">??</a>${strs_list.length}.${small_list_num} ${middletext[1]}</ul><div class="w-full h-auto bg-white"></div><end>`
-            big_list_and_small_list_relation[strs_list.length-1].push(current_small_list_box.current);
-            small_list_num+=1
-            return;
-          }
-    
-    
-          else if(!texts.endsWith("</img>")){
-            if(current_small_list_box.current===null&&current_big_list_box.current===null){
-              texts+="<br/>"
-              strs+=texts
-              return ;
-            }
-            else if(current_small_list_box.current===null&&current_big_list_box.current!==null){
-       
-        
-              
-              let bigs_list=current_big_list_box.current.split("</div><end>")
-           
-              bigs_list.pop()
-              bigs_list.push(texts+"<br/></div><end>")
-              bigs_list=bigs_list.join(" ")
-              current_big_list_box.current=bigs_list
-              strs_list.pop()
-              strs_list.push(bigs_list)
-              
-              return ;
-            }
-    
-            let lastIndex =current_small_list_box.current.lastIndexOf("</div><end>");
-            let small_list=current_small_list_box.current.substring(0, lastIndex) + current_small_list_box.current.substring(lastIndex).replace("</div><end>","");
-            //let small_list=current_small_list_box.current.split("</div><end>");
-            //console.log("small_list:",small_list);
-            //small_list.pop()
-            //small_list.push(texts+"<br/></div><end>")
-            //small_list=small_list.join(" ")
-            //console.log("texts:",texts==="");
-           
-            small_list=small_list+texts+"</br></div><end>"
-            current_small_list_box.current=small_list
-            
-            big_list_and_small_list_relation[strs_list.length-1].pop()
-            big_list_and_small_list_relation[strs_list.length-1].push(small_list)
-           // lastIndex=current_big_list_box.current.lastIndexOf("</div><end>");
-            //let big_list=current_big_list_box.current.substring(0, lastIndex) + current_big_list_box.current.substring(lastIndex).replace("</div><end>","");
-            //big_list.pop()
-            //big_list.push(small_list+"<br/></div><end>")
-            //big_list=big_list.join(" ")
-            //big_list=big_list+small_list+"<br/></div><end>"
-           // console.log("big_list:",big_list)
-           // current_big_list_box.current=big_list
-           // strs_list.pop()
-          //strs_list.push(big_list)
-    
-            return ;
-          }
-         
-          else{
-            strs+=texts
-          return;
-          }
-    
-        })
-       
-        //console.log(compiler_text)
-        //console.log(texts.match(/<(?!\/?(?:s|b|i|h[1-3]|br|u)\b)[^>]*>/g));
-        
-        /*if(strs_list.length>0){
-          strs_list=strs_list.map(x=>{
-        
-            let y=x.replace(/<end>
-            /g,"</div></div>")
-            console.log("y:",y)
-            return y;
-          })
-            strs+=strs_list.join("</br>")}*/
-        if(strs_list.length>0){
-    
-          strs_list=strs_list.map((x,idx)=>{
-    
-            let small_list=big_list_and_small_list_relation[idx]
-            small_list=small_list.join(" ")
-            small_list=small_list.replace(/<end>/g,"</div></div>")
-            let lastIndex=x.lastIndexOf("</div><end>");
-            x=x.substring(0, lastIndex) + x.substring(lastIndex).replace("</div><end>","");
-            x=x+small_list+"</div></div></div>"
-            return x;
-          })
-          strs+=strs_list.join("</br>")
-    
-        }
-        set_preview_text(strs)
+        //let texts=x.value;
+  
+        text=TextEngine(text);
+  
+  
+  
+        strs+=text;
+      })
+      intro_index=TextEngine("intro_index");
+      introductions=TextEngine("intro");
+      strs=introductions+strs+TextEngine("각주리스트");
 
-        return strs;
-        
+
+
+
+      return strs;
     }
-
+  
 
     const change_img=(event)=>{
         if(event.target.tagName==="A"){
@@ -183,7 +80,8 @@ const Main_Board=({content_title})=>{
              }
         
         let child_node=event.target.children
-        console.log(child_node,event.target.parentElement,event.target.parentElement.children)
+        console.log("target:",event.target);
+        console.log("child_node:",child_node)
                
          if(child_node[0].src==="http://localhost:3000/arrow_down.svg"){
             child_node[0].src="../../../arrow_right.svg"
@@ -201,48 +99,44 @@ const Main_Board=({content_title})=>{
 
 
     const get_data_from_redux=async(title)=>{
-      console.log("값비교:",current_content.title!==title,current_content.title,title);
+      console.log("redux 값:",current_content.content);
+      seterror(false)
       if(current_content.title!==title){
-
-
-        let datas=await fetch(`${back_end_url}search/${title}`,{
-            method:"GET"
-        })
-
-        if(!datas.ok){
+        
+        console.log("기존과 다른 리덕스 이므로 dispathc 실행")
+        let data=await fetching_get_with_no_token(`${back_end_url}search/${title}`);
+        console.log("data:",data)
+        if(data.success){
           
-          
-          //router.push("/404");
-          seterror("에러발생");
-
-
-        }
-      else{
-      let res=await datas.json();
-        console.log("res:",res);
-      res=res.data;
-        console.log("datas:",datas);
-
+        data=data.data;
+   
         //{content_id,title,content 로구성됨.}
 
-        dispatch({type:"Change_Content",content:{content_id:res.content_id,title:res.title,content:res.content,content_arr:res.content.split("\n")}})
-        console.log("디스패치끝!")
+        dispatch({type:"Change_Content",content:{content_id:data.content_id,title:data.title,content:data.content,email:data.email,update_time:data.update_time}})
+        }
+        else{
 
+          seterror(true);
+          //alert("없는 문서입니다")
+          //router.push("/")
+        }
       }
-      }
 
 
 
+
+      
     }
 
 
 
     useEffect(()=>{
 
-
-
+      console.log("normal use effect!!!")
       get_data_from_redux(content_title)
-
+      svg_url_arr.map((x,idx)=>{
+        check_in_db("img_store",idx,x,ref_arr[idx],0);
+      })
 
 
     },[])
@@ -251,16 +145,17 @@ const Main_Board=({content_title})=>{
 
     useEffect(()=>{
      
-      
+      console.log("normal use effect222222!!!")
       let doc=document.getElementById("content_area");
       //let strs=data.content.split("\n");
       
       let strs=current_content.content.split("\n");
+      console.log("저장된값:",strs);
       strs=show_window(strs);
-      console.log("current_content:",current_content);
+      //console.log("current_content:",current_content);
       doc.innerHTML=strs;
 
-      let docs=doc.getElementsByClassName("big_area");
+      /*let docs=doc.getElementsByClassName("big_area");
       Array.from(docs).map(x=>{
           let header_ul=x.children[0];
 
@@ -272,64 +167,102 @@ const Main_Board=({content_title})=>{
                   header_ul.addEventListener("click",change_img)
               })
           }
-      })
-      
+      })*/
+          let big_areas=doc.getElementsByClassName("big_area");
+       
+
+          let small_areas=doc.getElementsByClassName("small_area")
+          
+  
+          let sup_hrefs=doc.getElementsByClassName("sup_href");
+
+  
+          Array.from(big_areas).map(x=>{
+              let header_ul=x.children[0];
+              
+  
+              header_ul.addEventListener("click",change_img);
+          })
+          Array.from(small_areas).map(x=>{
+              
+              let small_ul=x.children[0];
+              small_ul.addEventListener("click",change_img);
+          })
 
     },[current_content])
 
 
 
     return(
-          <div>
-               { error ? <div>{error}</div> 
+          <div className="lg:w-90p w-full">
+               { error ? <div>                
+                <div className=" flex w-full h-auto justify-between items-center border-solod border-[2px] border-black">
+                    <div className=" text-[35px] w-auto h-auto ml-[10px]">
+                          no found page
+                    </div>
+                    
+                  </div>    
+                    </div> 
                
                
                :
-               <div>
-                <div className=" flex w-full h-auto justify-between items-center border-solod border-[2px] border-black">
+               <div className="w-full">
+                <div className="flex w-full h-auto justify-between items-center border-solod border-[2px] border-black">
                     <div className=" text-[35px] w-auto h-auto ml-[10px]">
                         {current_content.title}
                         <div className="text-[15px]">
-                            최근수정일
+                            <div className="w-fit h-fit flex flex-col">
+                            최근수정일:{current_content.update_time.substring(0,16)}
+                            </div>
+                            <div>작성자:{current_content.email}</div>
                         </div> 
                     </div>
       
 
                     <div className="flex w-[240px] h-[50px]  mr-[10px]">
                         <button className="flex justify-center items-center  w-[80px] h-full  border-solid border-[2px] border-slate-300 rounded-l-10p"
-                            onMouseOver={(e)=>on_change_btn_color(e)}
+                            onMouseEnter={(e)=>on_change_btn_color(e)}
                             onMouseLeave={(e)=>off_change_btn_color(e)} >
-                            <img src="../../star.svg"></img>
+
+                <div className="flex flex-col w-fit -fit">
+                            <img ref={star} ></img>
+                            </div>
                          
                         </button>
-                        <Link href={`/edit/${current_content.content_id}`} className="flex justify-center items-center w-[80px] h-full border-solid border-[2px] border-slate-300 text-[15px] text-center ">
-                        <button className="  w-full h-full"
-                            onMouseOver={(e)=>on_change_btn_color(e)}
-                            onMouseLeave={(e)=>off_change_btn_color(e)}
-                            onClick={()=>click_change_window()}>
-                             
-                                <img src="../../edit.svg" ></img>
-                                    편집
-                          
-                        </button>
+                        <Link href={`/edit/${current_content.content_id}`} 
+                        className="flex justify-center items-center w-[80px]
+                         h-full border-solid border-[2px] border-slate-300 text-[10px] text-center " 
+                        onMouseEnter={(e)=>on_change_btn_color(e)}
+                        onMouseLeave={(e)=>off_change_btn_color(e)}>
+
+
+                        <div className="flex flex-col w-fit -fit">
+                            <img ref={edit} ></img>
+                                <div className="w-fit h-fit">편집</div>
+                          </div>
+                     
                         </Link>
-                        <Link href={`/history/${current_content.content_id}`} className="flex justify-center items-center w-[80px] h-full  border-solid border-[2px] border-slate-300 rounded-r-10p text-[15px]  text-center">
-                        <button className="w-full h-full" 
-                            onMouseOver={(e)=>on_change_btn_color(e)}
-                            onMouseLeave={(e)=>off_change_btn_color(e)}
-                            onClick={()=>click_change_window()}>
-                        
-                            <img src="../../history.svg" ></img>
-                                역사
-                          
-                        </button>
+                        <Link href={`/history/${current_content.content_id}`} 
+                        className="flex justify-center items-center w-[80px] h-full 
+                         border-solid border-[2px] border-slate-300 rounded-r-10p text-[10px]  text-center"
+                         onMouseEnter={(e)=>on_change_btn_color(e)}
+                         onMouseLeave={(e)=>off_change_btn_color(e)}
+                         onClick={()=>click_change_window()}>
+                      
+
+                            <div className="flex flex-col w-fit -fit">
+                            <img ref={history} ></img>
+                            <div className="w-fit h-fit">역사</div> 
+                            </div>
+                      
                         </Link>
   
                     </div>
 
                 </div>
-                <div className="w-full h-auto" id="content_area">
-                       
+                <div className=" w-90p h-auto  " id="content_area">
+
+
                 </div>
                 </div>
             }
@@ -342,3 +275,5 @@ const Main_Board=({content_title})=>{
 
 
 export default Main_Board;
+
+//<img ref={history} src="../../history.svg" ></img>

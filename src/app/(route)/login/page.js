@@ -2,13 +2,16 @@ import Login from "@/app/components/login";
 
 
 
+
 const LoginPage=()=>{
 
 
 
 
     return(
+      
         <Login/>
+       
     )
 }
 

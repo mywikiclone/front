@@ -3,6 +3,8 @@
 import React,{useEffect,useState,useRef} from 'react'
 import Preview from "./preview"
 import { Zen_Tokyo_Zoo } from 'next/font/google'
+import {fetching_post_with_no_token} from './fetching'
+import { useRouter } from 'next/navigation'
 //import './style.scss'
 const MenuBar = () => {
   const tags_for_edit={
@@ -13,7 +15,9 @@ const MenuBar = () => {
 
   }
   //const [current_box,set_current_box]=useState(1);-->usestate는 값이바뀔떄마다 리랜더링발생
+  const router=useRouter();
   const current_box=useRef(1);
+  const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL
   const current_big_list_box=useRef(null);
   const current_small_list_box=useRef(null);
   const [show_preview,set_show_preivew]=useState(false);
@@ -51,143 +55,31 @@ const MenuBar = () => {
 
 
   const show_window=()=>{
-    current_big_list_box.current=null;
-    current_small_list_box.current=null;
-    if(show_preview!==true){
     compiler_data.current=[];
     let txtarea=document.getElementsByClassName("texts")
-    let strs=""
-    let reg_exp_big_title=/==.*?==/
-    let reg_exp_small_title=/=.*?=/
-    let strs_list=[]
-    let big_list_and_small_list_relation={}
-    let small_list_num=1;
-    
-    set_compiler_text([])
+    let strs="";
+    let introductions=""
+    let intro_index=""
     Array.from(txtarea).map((x)=>{
-      
-      compiler_data.current=[...compiler_data.current,{id:x.id,text:x.value,height:(x.scrollHeight+"px")}]
-      //set_compiler_text(prev=>[...prev,{id:x.id,text:x.value,height:(x.scrollHeight+"px")}])
-      //let texts=x.value.replace(/\n/g,"<br/>");
-      let texts=x.value;
-      if(texts.match(reg_exp_big_title)!=null){
-      
-
-        let middletext=texts.split("==")
-        console.log("big:",texts,middletext)
-        current_big_list_box.current=`<div class="big_area w-full h-auto bg-white"><div class="w-full h-auto bg-white"><ul class="w-full h-[50px] border-b-2 border-solid border-gray-300"><img  src="../../../arrow_down.svg" class="pointer-events-none" ></img><a href="https://namu.wiki/w/NGC%205694" target="_blank">??</a>${strs_list.length+1} ${middletext[1]}</ul><div class="w-full h-auto bg-white"></div><end>`
-
-        strs_list.push(current_big_list_box.current)
-        big_list_and_small_list_relation[strs_list.length-1]=[];
-    
-
-
-        current_small_list_box.current=null
-        small_list_num=1
-        return;
-      }
-      else if(texts.match(reg_exp_small_title)!=null){
-
- 
-        let middletext=texts.split("=")
-        console.log("small:",texts,middletext)
-        current_small_list_box.current=`<div class="small_area w-full h-auto bg-white"><div class="w-full h-auto bg-white"><ul class="w-full h-[50px] border-b-2 border-solid border-gray-300"><img  src="../../../arrow_down.svg" class="pointer-events-none" ></img><a href="https://namu.wiki/w/NGC%205694" target="_blank">??</a>${strs_list.length}.${small_list_num} ${middletext[1]}</ul><div class="w-full h-auto bg-white"></div><end>`
-        big_list_and_small_list_relation[strs_list.length-1].push(current_small_list_box.current);
-        small_list_num+=1
-        return;
-      }
-
-
-      else if(!texts.endsWith("</img>")){
-        if(current_small_list_box.current===null&&current_big_list_box.current===null){
-          texts+="<br/>"
-          strs+=texts
-          return ;
-        }
-        else if(current_small_list_box.current===null&&current_big_list_box.current!==null){
-   
-    
-          
-          let bigs_list=current_big_list_box.current.split("</div><end>")
-       
-          bigs_list.pop()
-          bigs_list.push(texts+"<br/></div><end>")
-          bigs_list=bigs_list.join(" ")
-          current_big_list_box.current=bigs_list
-          strs_list.pop()
-          strs_list.push(bigs_list)
-          
-          return ;
-        }
-
-        let lastIndex =current_small_list_box.current.lastIndexOf("</div><end>");
-        let small_list=current_small_list_box.current.substring(0, lastIndex) + current_small_list_box.current.substring(lastIndex).replace("</div><end>","");
-        //let small_list=current_small_list_box.current.split("</div><end>");
-        console.log("small_list:",small_list);
-        //small_list.pop()
-        //small_list.push(texts+"<br/></div><end>")
-        //small_list=small_list.join(" ")
-        console.log("texts:",texts==="");
-       
-        small_list=small_list+texts+"</br></div><end>"
-        current_small_list_box.current=small_list
         
-        big_list_and_small_list_relation[strs_list.length-1].pop()
-        big_list_and_small_list_relation[strs_list.length-1].push(small_list)
-       // lastIndex=current_big_list_box.current.lastIndexOf("</div><end>");
-        //let big_list=current_big_list_box.current.substring(0, lastIndex) + current_big_list_box.current.substring(lastIndex).replace("</div><end>","");
-        //big_list.pop()
-        //big_list.push(small_list+"<br/></div><end>")
-        //big_list=big_list.join(" ")
-        //big_list=big_list+small_list+"<br/></div><end>"
-       // console.log("big_list:",big_list)
-       // current_big_list_box.current=big_list
-       // strs_list.pop()
-      //strs_list.push(big_list)
-
-        return ;
-      }
-     
-      else{
-        strs+=texts
-      return;
-      }
-
-    })
+      compiler_data.current=[...compiler_data.current,{id:x.id,text:x.value,height:(x.scrollHeight+"px")}]
    
-    //console.log(compiler_text)
-    //console.log(texts.match(/<(?!\/?(?:s|b|i|h[1-3]|br|u)\b)[^>]*>/g));
-    
-    /*if(strs_list.length>0){
-      strs_list=strs_list.map(x=>{
-    
-        let y=x.replace(/<end>
-        /g,"</div></div>")
-        console.log("y:",y)
-        return y;
-      })
-        strs+=strs_list.join("</br>")}*/
-    if(strs_list.length>0){
+      let texts=x.value;
 
-      strs_list=strs_list.map((x,idx)=>{
+      texts=TextEngine(texts);
 
-        let small_list=big_list_and_small_list_relation[idx]
-        small_list=small_list.join(" ")
-        small_list=small_list.replace(/<end>/g,"</div></div>")
-        let lastIndex=x.lastIndexOf("</div><end>");
-        x=x.substring(0, lastIndex) + x.substring(lastIndex).replace("</div><end>","");
-        x=x+small_list+"</div></div></div>"
-        return x;
-      })
-      strs+=strs_list.join("</br>")
 
-    }
+
+      strs+=texts;
+    })
+    intro_index=TextEngine("intro_index");
+    introductions=TextEngine("intro");
+    strs=introductions+strs+TextEngine("각주리스트");
     set_preview_text(strs)
     set_show_preivew(true)
-    set_deafult_view(true)
-    
-    } 
+    set_deafult_view(false)
   }
+
 
   
   const show_compiler=()=>{
@@ -333,14 +225,31 @@ const MenuBar = () => {
     }
 
   }
-  const save_text=(event)=>{
+  const save_text=async (event)=>{
     let targets=event.target.parentElement.parentElement.children[2].children;
     let strs=""
+    let title=document.getElementById("title_area")
+    title=title.value;
     Array.from(targets).map(x=>{
       
       strs+=x.children[1].value+"\n"
     })
+
+    let data=await fetching_post_with_no_token(`${back_end_url}save`,{title:title,content:strs})
     //api 로 strs보내기!
+
+    if(data.success){
+
+      router.push(`currentversion/${title}`)
+     
+    }
+    else{
+      router.push("/")
+    }
+
+
+
+
   }
 
 
@@ -369,7 +278,7 @@ const MenuBar = () => {
   return (
     <div className="flex h-screen justify-center items-center">
     <div className=" flex flex-col  items-center border-[2px] text-[24px] w-full h-95p">
-      <div className="w-90p text-left h-[75px] bg-blue-200 text-[50px]">dhzzzz</div>
+      <textarea id="title_area" className="w-90p text-left h-[75px] bg-blue-200 text-[50px] resize-none outline-0">dhzzzz</textarea>
       <div className="flex justify-center w-90p h-[50px] bg-blue-200">
         <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
       <button onClick={()=>show_window()} className="text-[20px]">

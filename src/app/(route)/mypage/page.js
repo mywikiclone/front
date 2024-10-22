@@ -1,5 +1,10 @@
 "use client"
-import Link from "next/link"
+
+import TestingEdits from "@/app/components/testingedit"
+
+TestingEdits
+
+
 const MyPage=()=>{
 
 
@@ -9,9 +14,8 @@ const MyPage=()=>{
 
 
 return(
-    <div>
-        마이페이지
-    </div>
+    <TestingEdits/>
+        
 )
 
 
