@@ -7,7 +7,7 @@ import { useSelector,useDispatch } from "react-redux"
 import dynamic from 'next/dynamic'
 import { get_db,get_data_from_db,add_data_in_db,check_in_db } from './indexdb'
 import { makebase64 } from "./action";
-import { fetching_post__with_token,fetching_get_with_no_token,make_storage_logout} from './fetching'
+import { fetching_post__with_token,fetching_get_with_no_token} from './fetching'
 //import './style.scss'
 const Test_Edit = ({content_id}) => {
 
@@ -483,7 +483,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
           
       }
       else{
-        make_storage_logout();
+       
         dispatch({type:"LogOut"})
         route.push("/login")
       }

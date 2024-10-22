@@ -28,11 +28,12 @@ const History=({content_id})=>{
         
         
 
-        let data=await fetching_get_with_no_token(`${back_end_url}changelog/${current_page}/${content_id}`)
+        /*let data=await fetching_get_with_no_token(`${back_end_url}changelog/${current_page}/${content_id}`)
         if(data.success){
         data=data.data;
 
-        set_update_datas(data)}
+        set_update_datas(data)}*/
+        return ;
         
     } 
 
@@ -42,7 +43,7 @@ const History=({content_id})=>{
         
 
 
-        let data=await fetching_get_with_no_token(`${back_end_url}changelog/${current_page+1}/${content_id}`)
+        /*let data=await fetching_get_with_no_token(`${back_end_url}changelog/${current_page+1}/${content_id}`)
 
         if(data.success){
             set_update_datas(data.data)
@@ -50,7 +51,9 @@ const History=({content_id})=>{
         }
         else{
             return ;
-        }
+        }*/
+
+            return;
 
    
     }
@@ -62,7 +65,7 @@ const History=({content_id})=>{
         }
         else{
 
-            let data=await fetching_get_with_no_token(`${back_end_url}changelog/${current_page-1}/${content_id}`)
+            /*let data=await fetching_get_with_no_token(`${back_end_url}changelog/${current_page-1}/${content_id}`)
 
             if(data.success){
     
@@ -70,7 +73,9 @@ const History=({content_id})=>{
             set_current_page(current_page-1)}
             else{
                 return ;
-            }
+            }*/
+
+                return;
         }
     }
 

@@ -305,7 +305,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
 
     
-    let res_data=await fetching_post__with_token(`${back_end_url}save`,{title:title_input.current.value,content:strs})
+   /* let res_data=await fetching_post__with_token(`${back_end_url}save`,{title:title_input.current.value,content:strs})
     console.log("res_data:",res_data);
 
       if(res_data.success){
@@ -326,7 +326,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
           alert("알수없는 오류발생")
         }
       
-      }
+      }*/
+     return ;
     
     }
 
@@ -337,7 +338,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       console.log("id:",id,typeof(id))
       console.log("id2:",current_content.content_id,typeof(current_content.content_id));
 
-      datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`)
+      /*datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`)
 
 
       if(datas.success){
@@ -361,7 +362,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
         alert("없는 문서입니다!")
         route.push("/")
 
-      }
+      }*/
+     return ;
   
 
     }

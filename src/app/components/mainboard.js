@@ -104,7 +104,7 @@ const Main_Board=({content_title})=>{
       if(current_content.title!==title){
         
         console.log("기존과 다른 리덕스 이므로 dispathc 실행")
-        let data=await fetching_get_with_no_token(`${back_end_url}search/${title}`);
+       /* let data=await fetching_get_with_no_token(`${back_end_url}search/${title}`);
         console.log("data:",data)
         if(data.success){
           
@@ -119,7 +119,9 @@ const Main_Board=({content_title})=>{
           seterror(true);
           //alert("없는 문서입니다")
           //router.push("/")
-        }
+        }*/
+
+          return;
       }
 
 
