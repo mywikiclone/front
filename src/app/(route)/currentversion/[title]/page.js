@@ -32,8 +32,9 @@ const Mainboard=()=>{
     return (
 
         
- 
+   
         <Main_Board content_title={decodeURIComponent(title)}/>
+        
        
     
 

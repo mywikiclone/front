@@ -1,4 +1,3 @@
-
 import React,{useEffect,useState,useRef} from 'react'
 //import Preview from "./preview"
 
@@ -10,21 +9,14 @@ import { fetching_post__with_token,fetching_get_with_no_token,make_storage_logou
 
 import TextEngine from './textengine'
 
-const Edit_By_Id = ({content_id}) => {
+const Edit_Main = () => {
 
-
-
+  const dispatch=useDispatch();
+  const title_input=useRef(null);
   const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
   const relogin_error_msg=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
   const DnynamicPreview=dynamic(()=>import('../components/editpreview'),{loading:()=><div>...loading</div>,ssr:false})
   //<Preview text={preview_text}/>
-
-  const current_content=useSelector((state)=>state.current_content);
-  const dispatch=useDispatch();
-  const current_search_box=useSelector((state)=>state.current_search_box);
-  let test=[];
-
-  let ex=current_content.content.split("/n");
 
   const route=useRouter();
   const tags_for_edit={
@@ -36,24 +28,13 @@ const Edit_By_Id = ({content_id}) => {
   }
   //const [current_box,set_current_box]=useState(1);-->usestate는 값이바뀔떄마다 리랜더링발생
   const current_box=useRef(1);
-  const current_big_list_box=useRef(null);
-  const current_intro_box=useRef(`<div class="w-fit h-fit">`);
-  const current_free_detail_box=useRef(null);
-  let intro_free_detail_box_list=[];
-
-
-
-
-  const current_small_list_box=useRef(null);
-  let [big_titles,set_big_titles]=useState([])
-  let[small_titles,set_small_titles]=useState([]);
   const [show_preview,set_show_preivew]=useState(false);
   const [preview_text,set_preview_text]=useState("");
   const [titles,set_titles]=useState("");
   const [compiler_text,set_compiler_text]=useState([])
   const compiler_data=useRef();
   const [default_view,set_deafult_view]=useState(true);
-  const [start_text,set_start_text]=useState([]);
+  const [start_text,set_start_text]=useState([""]);
   const italic=useRef(null);
   const bold=useRef(null);
   const strike=useRef(null)
@@ -64,51 +45,6 @@ const Edit_By_Id = ({content_id}) => {
   }
   
 const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
-
-  /*const check_in_db=async (idx,url)=>{
-
-    let db=await get_db();
-    let data=await get_data_from_db(db,"img_store",idx)
-    let base64string="";   
-    if(data===undefined){
-      base64string=await makebase64(url)
-      let x= await add_data_in_db(db,"img_store",idx,base64string)
-      switch(idx){
-        case 3:
-          italic.current.src=base64string;
-          break;
-        case 4:
-          bold.current.src=base64string;
-          break;
-        case 5:
-          strike.current.src=base64string;
-          break;
-
-        default:
-          break;
-      }
-    }
-    else{
-     
-      switch(data.id){
-        case 3:
-          italic.current.src=data.data;
-          break;
-        case 4:
-          bold.current.src=data.data;
-          break;
-        case 5:
-          strike.current.src=data.data;
-          break;
-
-        default:
-          break;
-    }
-    }
-
-
-  }*/
-
 
   const show_window=()=>{
     compiler_data.current=[];
@@ -364,25 +300,19 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       strs+=x.children[1].value+"\n"
     })
     console.log("업데이트 되는값:",strs);
+    console.log("제목:",title_input.current.value);
     //api 로 strs보내기!
 
 
     
-    let res_data=await fetching_post__with_token(`${back_end_url}update`,{content_id:content_id,title:titles,content:strs})
-
+    let res_data=await fetching_post__with_token(`${back_end_url}save`,{title:title_input.current.value,content:strs})
+    console.log("res_data:",res_data);
 
       if(res_data.success){
-          
-          dispatch({type:"Change_Content",content:{
-          content_id:content_id,
-          title:titles,
-          content:strs,
-          update_time:res_data.data,
-          email:current_content.email
-          }})
 
-     
-           route.push(`/currentversion/${encodeURIComponent(titles)}`);
+            console.log("res_data:",res_data);
+            dispatch({type:"Change_Content",content:{content_id:res_data.data.content_id,title:res_data.data.title,content:res_data.data.content,update_time:res_data.data.update_time,email:res_data.data.email}})
+            route.push(`/currentversion/${encodeURIComponent(res_data.data.title)}`)
           
       }
       else{
@@ -418,8 +348,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       //{content_id,title,content 로구성됨.}
 
 
-      dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content,email:datas.email,update_time:datas.update_time}})
-      //dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content}})
+
+      dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content}})
      
       console.log("dispatch in edit");
       set_start_text(datas.content.split("\n"))
@@ -460,7 +390,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
   }
 
-  useEffect(()=>{
+  /*useEffect(()=>{
     console.log("searbh_box:",current_search_box.popup)
     setting_start_text(content_id)
     svg_url_arr.map((x,idx)=>{
@@ -471,7 +401,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     })
     console.log("default_view:",default_view);
 
-  },[])
+  },[])*/
 
 
   const show_border_line=(event,check)=>{
@@ -487,8 +417,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   return (
     <div className="flex w-full h-screen  lg:items-center items-start lg:justify-center justify-start ">
     <div className=" flex flex-col  items-center border-[2px] text-[24px] w-full h-95p">
-      <div className=" text-left h-[75px]  text-[50px] lg:w-90p w-full">{current_content.title}
-       
+      <div className=" text-left h-[75px]  lg:w-90p w-full">
+        <input ref={title_input} className="text-[15px] h-fit w-fit" placeholder='제목을 입력해주세요'></input>
       </div>
       <div className="flex justify-center lg:w-90p w-full h-[50px] bg-blue-200">
         <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
@@ -610,34 +540,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   )
 
 }
-//w-full h-[200px] bg-white
-
-
-/*
-(
-             start_text.length!==0 ?
-            (start_text.map((x)=>(
-                
-                <div key={x["id"]} className="row_box my-[1px] flex">
-                   <div className="text-center row_box_num w-[50px] h-[30px] bg-blue-200 border-2 text-[15px]">
-                          {x["id"]}
-                    </div>
-                    <textarea  id={x["id"]} spellCheck='false'rows={1}  onInput={(event)=>textarea_auto_sizing(event)}  
-                        onKeyDown={(event)=>add_row_num(event)}
-                        onClick={(event)=>set_current_num(event)}
-                        className="texts w-full h-[30px]  bg-slate-300 resize-none outline-0 text-[15px]"
-                        defaultValue={x["text"]} >    
-                    </textarea>
-                </div> 
-  
-                )))
-                :null
-            
-            )
-
-*/ 
 
 
 
-
-export default Edit_By_Id;
+export default Edit_Main;

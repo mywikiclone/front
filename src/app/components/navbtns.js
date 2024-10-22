@@ -2,29 +2,23 @@
 
 import Link from "next/link"
 import { useRouter,useEffect } from "next/navigation";
+import { fetching_get_with_no_token } from "./fetching";
 import LoginNav from "./LoginNav";
+import { backIn } from "framer-motion";
 const NavBtn=()=>{
     const router=useRouter();
+    const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
 
-    const random_search_event=async()=>{
-      console.log("랜덤문서")
-      let data=await fetch("/api/random",{
-        method:"GET"
-      })
-      .then((res)=>{return res.json()})
-      .then((res)=>{return res.data;})
-      router.push(`/currentversion/${data.title}`) 
-    }
    
     
     return(
-      <div className="inline-block">
-            <Link href="/" className="mr-[60px]">나무위키</Link>
-            <Link href="/pages/changed" className="mr-[60px]">최근변경</Link>
-            <Link href="/pages/arg" className="mr-[60px]">최근토론</Link>
+      <div className="flex justify-between">
+            <Link href="/" className="text-nowrap mr-[20px]">나무위키</Link>
+            <Link href="/pages/changed" className=" text-nowrap mr-[20px]">최근변경</Link>
+            <Link href="/discussion" className=" text-nowrap mr-[20px]">최근토론</Link>
+            <Link href="/edit" className="mr-[20px]" >글작성</Link>
             <LoginNav/>
-            <a>특수기능</a>
-            <button className="randomBtn" onClick={()=>{random_search_event()}}>⟳</button>
+            
         </div>
 
     )
@@ -35,3 +29,6 @@ const NavBtn=()=>{
 
 
 export default NavBtn;
+
+
+ //<Link href="/edit" className="mr-[60px] text-nowrap">작성하기</Link>

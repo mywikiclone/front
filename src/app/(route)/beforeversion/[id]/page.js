@@ -8,9 +8,9 @@ const Main=()=>{
     let nums=path.split("/")[2]
     console.log("beforeversion!")
     return(
-    <div>
+    
         <Search_before_version id={nums}/>
-    </div>
+   
     )
 
 
