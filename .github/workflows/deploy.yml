@@ -5,57 +5,62 @@ on: workflow_dispatch
 env:
   # AWS 관련
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: mywikiclones3
-  CODE_DEPLOY_APPLICATION_NAME: mywikicodedeploy
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: production2
-  # 코드 관련
-  ENVIRONMENT_VARIABLE_FILE_PATH: ./src/main/resources/env.yml
-
-  
+  S3_BUCKET_NAME: mywikifronts3
+  CODE_DEPLOY_APPLICATION_NAME: mywikifrontapplication
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: mywikifront
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4 # 저장소로 부터 코드를 내려받는 액션
+      - name: Checkout source code.
+        uses: actions/checkout@v3
 
-      
+      - name: Check Node v
+        run: node -v
 
-
-      - uses: actions/setup-java@v4 # java 세팅, temurin 의 17버전
-        with:
-          distribution: 'temurin' 
-          java-version: '21'
-
-      - name: Generate Environment Variable File
+      - name: Generate Environment Variables File
         run: |
-          mkdir -p ./src/main/resources
-          echo "DATA_BASE_URL: ${{ secrets.DATA_BASE_URL }}" >> ${{ env.ENVIRONMENT_VARIABLE_FILE_PATH }}
-          echo "AWS_EC2_URL: ${{ secrets.AWS_EC2_URL }}" >> ${{ env.ENVIRONMENT_VARIABLE_FILE_PATH }}
+          echo "NEXT_PUBLIC_MODE=$NEXT_PUBLIC_MODE" >> .env.development
+          echo "NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL" >> .env.development
+          echo "NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_ID" >> .env.development
+          echo "NEXT_PUBLIC_GOOGLE_LOGIN_REDIRECT_URI=$NEXT_PUBLIC_GOOGLE_LOGIN_REDIRECT_URI" >> .env.development
+          echo "NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_PW=$NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_PW" >> .env.development
+        env:
+          NEXT_PUBLIC_MODE: ${{ secrets.NEXT_PUBLIC_MODE }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_ID }}
+          NEXT_PUBLIC_GOOGLE_LOGIN_REDIRECT_URI: ${{ secrets.NEXT_PUBLIC_GOOGLE_LOGIN_REDIRECT_URI }}
+          NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_PW: ${{ secrets.NEXT_PUBLIC_GOOGLE_LOGIN_CLIENT_PW }}
 
-          
+      - name: Cache node modules
+        uses: actions/cache@v3
+        id: cache
+        with:
+          # node_modules라는 폴더를 검사하여
+          path: node_modules
+          # 아래 키값으로 cache가 돼있는지 확인합니다.
+          key: npm-packages-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Grant execute permission for gradlew 
-        run: chmod +x ./gradlew # gradlew 명령어 권한 부여
+      - name: Install Dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Build
+        run: |
+          npm run build:dev
+
+      - name: zip create
+        run: |
+          zip -qq -r --symlinks  ./til-dev.zip .
         shell: bash
 
-        
- 
-      - name: Build with Gradle     # 내려 받은 코드 빌드
-        run: ./gradlew clean build -x test
-
-
-
-
-
-      - name: Configure AWS credentials # AWS 자격 설정
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-region: ${{ env.AWS_REGION }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-          
+          aws-region: ap-northeast-2
 
       - name: Upload to AWS S3 # AWS S3 에 업로드
         run: | # 텍스트 블록의 시작
@@ -64,7 +69,6 @@ jobs:
             --ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
-        # AWS CodeDeploy 를 사용하여 파일을 업로드 == aws deploy push
 
       - name: Deploy to AWS EC2 from S3 # S3에 올린 것을 EC2로 배포하는 작업
         run: |
@@ -73,4 +77,3 @@ jobs:
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} \
             --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
-        # CodeDeploy 가 appspec.yml 을 실행 == aws deploy create-deployment
