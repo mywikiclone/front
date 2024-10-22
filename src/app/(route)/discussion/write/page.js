@@ -20,7 +20,7 @@ const MakeDiscussion=()=>{
         let title_to_send=title.current.value.trim();
 
         console.log("title_to_send:",title_to_send);
-        let data=await fetching_post__with_token(`${back_end_url}topicsave`,{topic_title:title_to_send,subject_title:subject_title.current.value.trim(),deadline:Number(days.current.value.trim()),introduction_text:introduction_texts.current.value})
+        /*let data=await fetching_post__with_token(`${back_end_url}topicsave`,{topic_title:title_to_send,subject_title:subject_title.current.value.trim(),deadline:Number(days.current.value.trim()),introduction_text:introduction_texts.current.value})
 
 
         if(data.success){
@@ -39,7 +39,8 @@ const MakeDiscussion=()=>{
 
 
             alert("제출 실패!")
-        }
+        }*/
+       return ;
 
     }
 
