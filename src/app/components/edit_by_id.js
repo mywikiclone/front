@@ -16,7 +16,7 @@ const Edit_By_Id = ({content_id}) => {
 
   const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
   const relogin_error_msg=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
-  const DnynamicPreview=dynamic(()=>import('../components/editpreview'),{loading:()=><div>...loading</div>,ssr:false})
+  const DnynamicPreview=dynamic(()=>import('./editpreview'),{loading:()=><div>...loading</div>,ssr:false})
   //<Preview text={preview_text}/>
 
   const current_content=useSelector((state)=>state.current_content);

@@ -1,6 +1,6 @@
 "use client"
 import { useRef,useState,useEffect } from "react"
-import Search_List from "./searchedlist"
+
 import Link from "next/link"
 //import { useRouter } from "next/router"-->usecliuent 사용시에는 next navigation이용
 import { useRouter } from "next/navigation"
@@ -30,7 +30,7 @@ const Search_box=()=>{
         }
 
 
-        let res=await fetching_get_with_no_token(`${back_end_url}searchlogic/${title}`);
+       /* let res=await fetching_get_with_no_token(`${back_end_url}searchlogic/${title}`);
 
         console.log("data:",res.data);
         if(res.success){
@@ -39,7 +39,7 @@ const Search_box=()=>{
             setpopup(true);
 
             return ;
-        }
+        }*/
 
    
 

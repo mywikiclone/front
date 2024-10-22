@@ -19,7 +19,7 @@ const LoginNav=()=>{
     const current_pop_up=useRef(null);
     const logout_func=async ()=>{
         set_popup(false)
-        let data=await fetching_get_with_token(back_end_url+"logout")
+       /* let data=await fetching_get_with_token(back_end_url+"logout")*/
         set_login_status("비로그인")
         usedispatch({type:"Change_User",userdata:{user_id:""}})
     
@@ -57,7 +57,7 @@ const LoginNav=()=>{
 
 
 
-        let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",{})
+        /*let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",{})
         console.log("login_data:",data);
     
         if(data.success){
@@ -70,6 +70,7 @@ const LoginNav=()=>{
             //let user_ip=get_user_ip();
         usedispatch({type:"Change_User",userdata:{user_id:""}})
         }
+        */
         
     }
     useEffect(()=>{
