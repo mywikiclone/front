@@ -2,7 +2,7 @@
 
 # 프로젝트 경로
 PROJECT_ROOT="/home/ec2-user/front"
-BUILD_DIR="$PROJECT_ROOT/mywikifront.next"
+#BUILD_DIR="$PROJECT_ROOT/mywikifront.next"
 APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
