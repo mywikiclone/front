@@ -60,12 +60,13 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_NEW_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_NEW_SECRET_KEY }}
           aws-region: ap-northeast-2
-       #--ignore-hidden-files \
+       #
       - name: Upload to AWS S3 # AWS S3 에 업로드
         run: | # 텍스트 블록의 시작
           aws deploy push \
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+            --ignore-hidden-files \
             --source .
 
       - name: Deploy to AWS EC2 from S3 # S3에 올린 것을 EC2로 배포하는 작업
