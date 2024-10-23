@@ -45,9 +45,9 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm install
 
-      - name: Build
-        run: |
-          npm run build
+      #- name: Build
+       # run: |
+        #  npm run build
 
       #- name: zip create
        # run: |
