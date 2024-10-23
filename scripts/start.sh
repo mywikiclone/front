@@ -7,6 +7,17 @@ APP_LOG="$PROJECT_ROOT/application.log"
 ERROR_LOG="$PROJECT_ROOT/error.log"
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
 
+
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# NVM을 통해 설치한 Node.js 버전 사용
+nvm use 20.18.0
+
+
+
 TIME_NOW=$(date +'%Y-%m-%d %H:%M:%S')
 
 echo "[$TIME_NOW] > Next.js 애플리케이션 빌드 시작" >> $DEPLOY_LOG
