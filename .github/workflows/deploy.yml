@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout source code.
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Check Node v
         run: node -v
@@ -60,12 +60,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_NEW_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.AWS_NEW_SECRET_KEY }}
           aws-region: ap-northeast-2
-
+       #--ignore-hidden-files \
       - name: Upload to AWS S3 # AWS S3 에 업로드
         run: | # 텍스트 블록의 시작
           aws deploy push \
             --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            #--ignore-hidden-files \
             --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
             --source .
 
