@@ -18,7 +18,7 @@ const Search_before_version=({id})=>{
         console.log(event.target.parentElement.parentElement.children[1].value)
         let text=event.target.parentElement.parentElement.children[1].value
         let title=event.target.parentElement.parentElement.children[0].textContent
-        /*let response=await fetching_post__with_token(`${back_end_url}update`,{content_id:id,title:title,content:text})
+        let response=await fetching_post__with_token(`${back_end_url}update`,{content_id:id,title:title,content:text})
         if(response.msg===relogin_sign){
            
             dispatch({type:"Change_User",userdata:{user_id:""}})
@@ -34,19 +34,19 @@ const Search_before_version=({id})=>{
             router.push(`/currentversion/${title}`)
 
 
-        }*/
+        }
        return;
     }
 
     const get_log_text=async ()=>{
 
 
-        /*let data=await fetching_get_with_no_token(`${back_end_url}changelog/${id}`)
+        let data=await fetching_get_with_no_token(`${back_end_url}changelog/${id}`)
         console.log("data:",data);
         if(data.success){
             set_change_text(data.data.content);
             set_change_title(data.data.title)}
-        */
+        
        return ;
     
     }

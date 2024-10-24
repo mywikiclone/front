@@ -39,7 +39,7 @@ const Topic=({topic_id})=>{
     const get_comments=async()=>{
 
 
-      /* let data=await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}/${click_num}`)
+       let data=await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}/${click_num}`)
 
        if(data.success){
         data.data.map((x)=>{
@@ -49,7 +49,7 @@ const Topic=({topic_id})=>{
 
 
         return ;
-       }*/ 
+       }
 
        set_comment_list([]);
        return ;
@@ -58,8 +58,7 @@ const Topic=({topic_id})=>{
     const savecomment=async()=>{
          
             save_btn.current.disabled=true;
-            return;
-            /*let disables=await fetching_get_with_no_token(`${back_end_url}timecheck/${topic_id}`)
+            let disables=await fetching_get_with_no_token(`${back_end_url}timecheck/${topic_id}`)
             console.log("test:",disables.data);
             
             if(disables.success && disables.data!=null){
@@ -113,7 +112,7 @@ const Topic=({topic_id})=>{
                                 
                     },1000)
 
-                }*/
+                }
     
             
 
@@ -245,7 +244,7 @@ const Topic=({topic_id})=>{
     const show_more=async()=>{
 
 
-       /* let data= await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}`)
+        let data= await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}`)
 
         if(data.success){
             
@@ -259,7 +258,7 @@ const Topic=({topic_id})=>{
 
        
         set_end(true);
-        console.log("fail");*/
+        console.log("fail");
         
         
         return ;
@@ -292,7 +291,7 @@ const Topic=({topic_id})=>{
         console.log("토픽체크:",topic_id!=current_discussion.topic_id)
         if(topic_id!=current_discussion.topic_id){
             
-            /*let data=await fetching_get_with_no_token(`${back_end_url}getdiscussion/${topic_id}`);
+            let data=await fetching_get_with_no_token(`${back_end_url}getdiscussion/${topic_id}`);
             if(data.success){
 
                 let now=new Date();
@@ -312,7 +311,7 @@ const Topic=({topic_id})=>{
 
                 return;
 
-            }*/
+            }
             return;
 
         }

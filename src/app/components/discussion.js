@@ -15,7 +15,7 @@ const Disucssion=()=>{
     const get_topic_list=async()=>{
 
 
-       /* let data=await fetching_get_with_no_token(`${back_end_url}topiclist/${page_num}`)
+        let data=await fetching_get_with_no_token(`${back_end_url}topiclist/${page_num}`)
         if(data.success){
         
         
@@ -23,7 +23,7 @@ const Disucssion=()=>{
             return ;
         
         }
-        settopiclist([]);*/
+        settopiclist([]);
 
         return;
         
@@ -48,7 +48,7 @@ const Disucssion=()=>{
 
 
 
-        /*let data=await fetching_get_with_no_token(`${back_end_url}topiclist/${page_num+1}`)
+        let data=await fetching_get_with_no_token(`${back_end_url}topiclist/${page_num+1}`)
 
         if(data.success){
             settopiclist(data.data)
@@ -56,7 +56,7 @@ const Disucssion=()=>{
         }
         else{
             return ;
-        }*/
+        }
 
             return ;
 
@@ -70,7 +70,7 @@ const Disucssion=()=>{
         else{
 
 
-            /*let data=await fetching_get_with_no_token(`${back_end_url}topiclist/${page_num-1}`)
+            let data=await fetching_get_with_no_token(`${back_end_url}topiclist/${page_num-1}`)
 
             if(data.success){
     
@@ -78,7 +78,7 @@ const Disucssion=()=>{
             set_page_num(page_num-1)}
             else{
                 return ;
-            }*/
+            }
 
             return ;
         }

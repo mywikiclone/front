@@ -15,14 +15,14 @@ const RealTimeIssue=()=>{
 
    const get_update_list=async ()=>{
       
-     /* let data=await fetching_get_with_no_token(`${back_end_url}lastchange`)
+      let data=await fetching_get_with_no_token(`${back_end_url}lastchange`)
       //console.log("패치실행완료:",data.data)
       //console.log("getdata:",data.data);
       if(data.success){
          
          set_update_last_list([...data.data])
          return ;
-      }*/
+      }
       set_update_last_list([])
 
       return ;

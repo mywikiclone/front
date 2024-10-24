@@ -30,7 +30,7 @@ const Search_box=()=>{
         }
 
 
-       /* let res=await fetching_get_with_no_token(`${back_end_url}searchlogic/${title}`);
+       let res=await fetching_get_with_no_token(`${back_end_url}searchlogic/${title}`);
 
         console.log("data:",res.data);
         if(res.success){
@@ -39,7 +39,7 @@ const Search_box=()=>{
             setpopup(true);
 
             return ;
-        }*/
+        }
 
    
 

@@ -19,7 +19,7 @@ const Login=()=>{
         let password=Password.current.value;
 
 
-       /* let res=await fetching_post__with_token_forlogin(`${back_end_url}firlogin`,{email:id,
+        let res=await fetching_post__with_token_forlogin(`${back_end_url}firlogin`,{email:id,
             password:password
         })
 
@@ -42,7 +42,7 @@ const Login=()=>{
 
             alert("로그인 실패!")
 
-        }*/
+        }
 
             return;
 

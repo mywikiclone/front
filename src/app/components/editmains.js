@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useSelector,useDispatch } from "react-redux"
 import dynamic from 'next/dynamic'
 import { get_db,get_data_from_db,add_data_in_db,check_in_db } from './indexdb'
-import { fetching_post__with_token,fetching_get_with_no_token,make_storage_logout} from './fetching'
+import { fetching_post__with_token,fetching_get_with_no_token} from './fetching'
 
 import TextEngine from './textengine'
 
@@ -305,7 +305,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
 
     
-   /* let res_data=await fetching_post__with_token(`${back_end_url}save`,{title:title_input.current.value,content:strs})
+    let res_data=await fetching_post__with_token(`${back_end_url}save`,{title:title_input.current.value,content:strs})
     console.log("res_data:",res_data);
 
       if(res_data.success){
@@ -326,7 +326,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
           alert("알수없는 오류발생")
         }
       
-      }*/
+      }
      return ;
     
     }
@@ -338,7 +338,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       console.log("id:",id,typeof(id))
       console.log("id2:",current_content.content_id,typeof(current_content.content_id));
 
-      /*datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`)
+      datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`)
 
 
       if(datas.success){
@@ -362,7 +362,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
         alert("없는 문서입니다!")
         route.push("/")
 
-      }*/
+      }
      return ;
   
 
@@ -392,7 +392,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
   }
 
-  /*useEffect(()=>{
+  useEffect(()=>{
     console.log("searbh_box:",current_search_box.popup)
     setting_start_text(content_id)
     svg_url_arr.map((x,idx)=>{
@@ -403,7 +403,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     })
     console.log("default_view:",default_view);
 
-  },[])*/
+  },[])
 
 
   const show_border_line=(event,check)=>{
