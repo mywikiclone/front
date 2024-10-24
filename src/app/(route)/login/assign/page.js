@@ -35,7 +35,7 @@ const Assign_page=()=>{
 
     const timer_function=async ()=>{
 
-        /*let data=await fetching_post_with_no_token(back_end_url+"requestmailauth",{
+        let data=await fetching_post_with_no_token(back_end_url+"requestmailauth",{
             mail_code:Id.current.value
         })
 
@@ -68,7 +68,7 @@ const Assign_page=()=>{
 
             console.log(data);
             alert("오류발생 다시시도해주세요")
-        }*/
+        }
        return ;
 
     }
@@ -167,7 +167,7 @@ const Assign_page=()=>{
 
 
     const auth_number_check=async()=>{
-       /* let data=await fetching_post_with_no_token(back_end_url+"mailauth",{
+        let data=await fetching_post_with_no_token(back_end_url+"mailauth",{
             email:Id.current.value,
             code:code.current.value
         })
@@ -181,7 +181,7 @@ const Assign_page=()=>{
 
             alert("값이 다릅니다")
 
-        }*/
+        }
     }
 
 
@@ -204,13 +204,14 @@ const Assign_page=()=>{
     const check_id_exist=async(event)=>{
 
 
-        /*let data=await fetching_post_with_no_token(back_end_url+"idcheck",{email:Id.current.value,passowrd:""})
+        let data=await fetching_post_with_no_token(back_end_url+"idcheck",{email:Id.current.value,passowrd:""})
 
         if(data.msg===id_exist_msg){
 
             event.target.textContent="중복체크"
             id_exist_box.current.classList.remove("invisible");
             set_id_exist(true);
+            return ;
             
         }
 
@@ -219,16 +220,16 @@ const Assign_page=()=>{
         set_id_exist(false);
         event.target.textContent="중복확인통과"
 
-        return ;*/
-
         return ;
+
+        
 
 
     }
 
     const submit_func=async (event)=>{
         event.preventDefault();
-        /*if(password_check&&email_check&&auth_code&&!id_exist){
+        if(password_check&&email_check&&auth_code&&!id_exist){
             let data=await fetching_post_with_no_token(back_end_url+"assign",{email:Id.current.value,password:Password.current.value})
             if(data.success){
 
@@ -247,7 +248,7 @@ const Assign_page=()=>{
 
                 alert("다시 확인해주세요")
 
-        }*/
+        }
        return ;
     }
 
