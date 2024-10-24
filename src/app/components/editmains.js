@@ -393,8 +393,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   }
 
   useEffect(()=>{
-    console.log("searbh_box:",current_search_box.popup)
-    setting_start_text(content_id)
+    //console.log("searbh_box:",current_search_box.popup)
+    //setting_start_text(current_content.content_id)
     svg_url_arr.map((x,idx)=>{
 
       check_in_db("img_store",idx,x,img_useref_list[idx],3)
