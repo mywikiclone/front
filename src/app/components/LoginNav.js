@@ -30,6 +30,7 @@ const LoginNav=()=>{
     }
 
     const show_login_popup=()=>{
+        console.log("click")
      
         set_popup(true);
        
