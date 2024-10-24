@@ -184,7 +184,7 @@ return(
             <button className="flex justify-center items-center bg-white border-solid border-[1px] lg:border-l-[1px] border-l-0 border-slate-300 lg:rounded-lg rounded-none lg:h-[45px] h-[35px] w-[45px]" onClick={()=>{random_search_event()}}>⟳</button>
             <form className="w-full h-fit" onSubmit={(e)=>{search_submit(e)}}>
        
-            <input ref={searchbox} type="text"  id="search_box" autocomplete="off" className="h-[35px] outline-none lg:border-0 border-[1px] lg:border-r-[1px] border-r-0 lg:border-l-[1px] border-l-0 lg:w-[250px] w-full lg:ml-[10px] border-solid border-slate-300 ml-0"onChange={(event)=>handle_change(event)} placeholder="값을 입력하세요">
+            <input ref={searchbox} type="text"  id="search_box" autoComplete="off" className="h-[35px] outline-none lg:border-0 border-[1px] lg:border-r-[1px] border-r-0 lg:border-l-[1px] border-l-0 lg:w-[250px] w-full lg:ml-[10px] border-solid border-slate-300 ml-0"onChange={(event)=>handle_change(event)} placeholder="값을 입력하세요">
             </input>
            
             </form>
