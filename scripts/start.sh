@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+TIME_NOW=$(date +'%Y-%m-%d %H:%M:%S')
 # 프로젝트 경로
 PROJECT_ROOT="/home/ec2-user/front"
 #BUILD_DIR="$PROJECT_ROOT/mywikifront.next"
@@ -18,7 +18,8 @@ nvm use 20.18.0
 
 
 
-TIME_NOW=$(date +'%Y-%m-%d %H:%M:%S')
+
+
 
 echo "[$TIME_NOW] > Next.js 애플리케이션 빌드 시작" >> $DEPLOY_LOG
 
@@ -37,7 +38,7 @@ echo "[$TIME_NOW] > 빌드 완료" >> $DEPLOY_LOG
 
 # 서버 실행
 echo "[$TIME_NOW] > Next.js 애플리케이션 실행 시작" >> $DEPLOY_LOG
-nohup npm start > $APP_LOG 2> $ERROR_LOG &
+nohup npm start > $APP_LOG 2> >(while read line; do echo "[$(date +'%Y-%m-%d %H:%M:%S')] $line"; done >> $ERROR_LOG) &
 
 # 결과 출력
 CURRENT_PID=$!
