@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /*webpack:(config,{isServer})=>{
+ /* webpack:(config,{isServer})=>{
     if(!isServer){
       config.output.filename="[name]-[contenthash].js";
       config.output.chunkFilename="[name]-[contenthash].js";
 
-      config.optimization.splitChunks={
+      /*config.optimization.splitChunks={
         chunks:'async',
         cacheGroups:{
           default:false,
