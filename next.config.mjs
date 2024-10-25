@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
+  output:"export",
  /* webpack:(config,{isServer})=>{
     if(!isServer){
       config.output.filename="[name]-[contenthash].js";
