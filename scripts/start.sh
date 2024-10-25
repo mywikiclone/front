@@ -25,7 +25,7 @@ echo "[$TIME_NOW] > Next.js 애플리케이션 빌드 시작" >> $DEPLOY_LOG
 
 # Next.js 애플리케이션 빌드
 cd $PROJECT_ROOT
-#npm install
+npm install
 npm run build
 
 # 빌드 결과 확인
