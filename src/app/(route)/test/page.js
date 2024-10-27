@@ -9,11 +9,12 @@ const Testing=()=>{
 
 
         let data=await fetch("http://ec2-43-203-240-88.ap-northeast-2.compute.amazonaws.com/healthycheck")
-        .then((res)=>{return res.json();})
+        .then((res)=>{
+            console.log("proxy:",res);})
 
 
 
-        console.log("proxy test:",data)
+
 
     }
 
@@ -23,11 +24,6 @@ const Testing=()=>{
 
 
     },[])
-
-
-
-
-
 
 
     return(
