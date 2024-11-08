@@ -74,7 +74,7 @@ jobs:
             #--source .
       - name: Upload files to S3
         run: |
-          aws s3 sync deploy-package.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip  
+          aws s3 cp deploy-package.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip  
       
      
       - name: Deploy to AWS EC2 from S3 # S3에 올린 것을 EC2로 배포하는 작업
