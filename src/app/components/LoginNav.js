@@ -5,7 +5,7 @@ import Link from "next/link";
 import Login from "./login";
 
 import { useSelector,useDispatch } from "react-redux";
-import { fetching_get_with_token,fetching_get_with_no_token, fetching_post__with_token_forlogin } from "./fetching";
+import { fetching_get_with_token,fetching_get_with_no_token, fetching_post__with_token_forlogin, fetching_get_with_token_and_csrf } from "./fetching";
 
 
 
@@ -19,18 +19,19 @@ const LoginNav=()=>{
     const current_pop_up=useRef(null);
     const logout_func=async ()=>{
         set_popup(false)
-        let data=await fetching_get_with_token(back_end_url+"logout")
+        let data=await fetching_get_with_token_and_csrf(back_end_url+"logout")
         set_login_status("비로그인")
+        localStorage.setItem("csrf-token",JSON.stringify(""));
         usedispatch({type:"Change_User",userdata:{user_id:""}})
     
 
 
-        console.log("로그아웃진행")
+
        
     }
 
     const show_login_popup=()=>{
-        console.log("click")
+      
      
         set_popup(true);
        
@@ -59,18 +60,18 @@ const LoginNav=()=>{
 
 
         let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",{})
-        console.log("login_data:",data);
-    
+     
+        console.log("datasuccess:",data.success);
         if(data.success){
-            console.log("쿠키가존재하므로 로그인으로 간주")
+          
         usedispatch({type:"Change_User",userdata:{user_id:data.data.email}})
+        return ;
+        }
 
-        }
-        else{
-            console.log("로그인 안된상황!")
-            //let user_ip=get_user_ip();
+       else{
         usedispatch({type:"Change_User",userdata:{user_id:""}})
-        }
+        return ;
+       }
         
         
     }
@@ -88,7 +89,7 @@ const LoginNav=()=>{
 
 
     useEffect(()=>{
-        console.log("현재데이터:",current_user_data.user_id);
+        
      
         if(current_user_data.user_id!==""){
             set_login_status(current_user_data.user_id);
@@ -126,18 +127,22 @@ const LoginNav=()=>{
             <button  className=" w-[50px] h-fit " onClick={()=>{show_login_popup()}}>로그인</button>
             
         {
-         popup ?   <div ref={current_pop_up} className="absolute bottom-[-140px] z-50 bg-white border-solid border-[1px] border-slate-300 w-[200px] h-fit rounded">
+         popup ?   <div ref={current_pop_up} className="flex flex-col absolute bottom-[-150px] z-50 bg-white border-solid border-[1px] border-slate-300 w-[200px] h-fit rounded">
 
             <div className="w-full h-fit p-[10px] text-[15px]">{login_status}</div> 
             
             <div className="w-full h-fit p-[10px]  text-[15px]">설정</div> 
-
+            
 
             <div className="w-full h-fit text-[15px] border-t-[1px] p-[10px]  border-solid border-slate-300">
-            { current_user_data.user_id!=="" ? <Link className="w-full h-fit" href="/" onClick={()=>{logout_func()}} >로그아웃</Link> 
-            : <Link className="w-full h-fit" href="/login" onClick={()=>{login_func()}} >로그인</Link>
+            { current_user_data.user_id!=="" ? <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit" href="/" onClick={()=>{logout_func()}} >로그아웃</Link>
+            <Link className="w-full h-fit text-[15px]" href="/login/forgetpassword" >비밀번호 바꾸기</Link> </div>
+            : <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit" href="/login" onClick={()=>{login_func()}} >로그인</Link>
+            <Link className="w-full h-fit  text-[15px]" href="/login/createpassword" >비밀번호 까먹엇어ㅛ...</Link>
+            </div>
             
             }
+            
             </div>
 
 

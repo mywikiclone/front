@@ -8,6 +8,8 @@ import RealTime2 from "./components/severcompoenenttest";
 import updownbtn from "./components/updownbtn";
 import Updownbtn from "./components/updownbtn";
 import LoginNav from "./components/LoginNav";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
+import Error from "./error";
 const x=""
 
 const inter = Inter({ subsets: ["latin"] });
@@ -16,11 +18,13 @@ const inter = Inter({ subsets: ["latin"] });
 //d아래처럼 감싸도 같은 store를 공유하며 redux상태값이 업데이트될떄리랜더링되는 애들은
 //useselector로 해당값을 참조하는 애들만 해당된다 ㅇㅇ
 const RootLayout=({children})=>{
-  console.log("루트레이아웃입니다!")
 return (
     <html lang="en">
       <body className={inter.className}>
+      
+      
       <Providers>
+    
       <div className="bg-teal-400 flex flex  relative justify-center  lg:h-[55px] h-[79px] lg:p-[5px] p-0 items-center  font-black">
       
         <div className="flex lg:w-70p w-full justify-between  lg:items-center items-start lg:flex-row flex-col">
@@ -38,8 +42,8 @@ return (
         
       </div>
       <div className="flex h-screen justify-center lg:items-center items-start">   
-        <div className="flex  justify-center items-start border-[2px] text-[24px] h-95p lg:w-70p w-full ">
-          <div className="w-full   bg-white border-[2px] border-solid border-slate-500  rounded-1p lg:mr-[20px] mr-0">
+        <div className="flex  justify-center items-start  text-[24px] h-95p lg:w-70p w-full ">
+          <div className="w-full bg-white lg:mr-[20px] mr-0">
 
 
         
@@ -47,9 +51,9 @@ return (
             <div className="w-full flex  lg: flex flex-col items-center ">
           
             
-           
+            <ErrorBoundary fallback={<Error />}>
               {children}
-
+              </ErrorBoundary>
 
               
         
@@ -58,13 +62,13 @@ return (
          
           </div>
        
-          <div className="lg:static absolute flex flex-col border-[2px] border-0   border-solid border-none border-slate-500  rounded-3p w-30p w-0 h-full lg:visible invisible ">
-            <div className="flex w-full flex-col h-[300px] border-[2px] border-solid border-blue-300">
-              <div className="w-full mb-[20px]">
+          <div className="lg:static absolute flex flex-col  w-30p w-0 h-full lg:visible invisible ">
+            <div className="flex w-full flex-col h-[300px]">
+              <div className="w-full mb-[20px] border-[1px] border-solid rounded-3p">
               <RealTime2/>
               </div>
-              <div className="w-full">
-                
+              <div className="w-full h-fit border-[1px] rounded-3p bg-white">
+              <RealTimeIssue/>
               </div>
 
 
@@ -73,11 +77,12 @@ return (
           </div>
 
    
-        <div className=" fixed bottom-[50px] lg:right-[300px] right-0 w-[40px]">
+        <div className=" fixed bottom-[30px] lg:right-[300px] right-0 w-[40px]">
             <Updownbtn/>
           </div>  
       </div>
       </div>
+  
       </Providers>
 
          </body>
@@ -93,7 +98,7 @@ return (
 
 export default RootLayout
 //<Search_box />
-//<RealTimeIssue/>
+//
 /*
           <div className="lg:block hidden">
           <Search_box/>

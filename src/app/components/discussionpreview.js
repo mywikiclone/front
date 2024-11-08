@@ -1,6 +1,7 @@
 "use client"
 import {useEffect} from "react"
 import { motion } from "framer-motion"
+import { txtfilter, video_filtering } from "./txtfilter"
 const DiscussionPreview=({text,show})=>{
   
     const show_window=(text)=>{
@@ -268,9 +269,11 @@ const DiscussionPreview=({text,show})=>{
 
             return "<br>"
         })
+        texts=txtfilter(texts);
+        texts=video_filtering(texts);
         doc.innerHTML=texts
 
-        let docs=doc.getElementsByClassName("big_area");
+        /*let docs=doc.getElementsByClassName("big_area");
         Array.from(docs).map(x=>{
             let header_ul=x.children[0];
 
@@ -282,7 +285,12 @@ const DiscussionPreview=({text,show})=>{
                     header_ul.addEventListener("click",change_img)
                 })
             }
-        })
+        })*/
+
+
+  
+
+        
     },[text])
 
     const vars={
@@ -296,7 +304,7 @@ const DiscussionPreview=({text,show})=>{
 
 
     return(
-    <motion.div  id="text_box" className="flex flex-col  overflow-y-auto bg-slate-100 break-words border-solid border-slate-300 border-[1px]"
+    <motion.div  id="text_box" className="flex flex-col resize-none outline-none overflow-y-auto bg-white break-words border-solid border-slate-400 border-[1px]"
     variants={vars}
     initial={show ? "open":"closed"}
     animate={show ? "open":"closed" }

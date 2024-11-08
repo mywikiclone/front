@@ -72,8 +72,9 @@ export  const add_data_in_db=(db,store_name,idx,base64string)=>{
 
 export const check_in_db=async (store_name,idx,url,ref_object,idx_plus)=>{
   let db=await get_db();
-
+ 
   let data=await get_data_from_db(db,store_name,idx+idx_plus)
+ 
   let base64string="";   
   if(data===undefined){
     base64string=await makebase64(url)
@@ -82,7 +83,7 @@ export const check_in_db=async (store_name,idx,url,ref_object,idx_plus)=>{
     ref_object.current.src=base64string;
   }
   else{
-   
+  
   ref_object.current.src=data.data;
   }
 

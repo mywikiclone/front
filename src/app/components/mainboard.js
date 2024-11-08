@@ -3,25 +3,26 @@
 //자식도 선언해줘야도니다.
 
 import { useState,useEffect,useRef} from "react"
-import { makebase64 } from "./action";
+
 import Link from 'next/link';
-import { Bakbak_One } from "next/font/google";
+
 import {useSelector,useDispatch} from "react-redux";
 import { useRouter } from "next/navigation"
 import {check_in_db} from "./indexdb"
 
 import { fetching_get_with_no_token } from "./fetching";
 import TextEngine from "./textengine";
+import Nothing from "./nothing";
+import MyClass from "./MyClass";
 
 const Main_Board=({content_title})=>{
-    const router=useRouter();
+    const myclassinstance=new MyClass();
+
+
+    let [check_grade,set_grade_check]=useState(false);
+    const redirect_handler=()=>{};    
     const dispatch=useDispatch();
     const current_content=useSelector((state)=>state.current_content);
-    console.log("current_content in mainboard:",current_content);
-    const current_box=useRef(1);
-    const current_big_list_box=useRef(null);
-    const current_small_list_box=useRef(null);
-    const [preview_text,set_preview_text]=useState("");
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
     const [error,seterror]=useState(false);
     const svg_url_arr=["public/star.svg","public/edit.svg","public/history.svg"];
@@ -29,11 +30,17 @@ const Main_Board=({content_title})=>{
     const star=useRef(null);
     const history=useRef(null);
     const ref_arr=[star,edit,history]
-    //const compiler_data=useRef();
-
 
  
+    const set_admin=(text)=>{
 
+
+        if(text==="Admin"){
+
+
+            set_grade_check(true);
+        }
+    }
 
 
     const on_change_btn_color=(event)=>{
@@ -57,21 +64,23 @@ const Main_Board=({content_title})=>{
      
         //let texts=x.value;
   
-        text=TextEngine(text);
+        text=TextEngine(text,myclassinstance);
   
   
   
         strs+=text;
       })
-      intro_index=TextEngine("intro_index");
-      introductions=TextEngine("intro");
-      strs=introductions+strs+TextEngine("각주리스트");
+      intro_index=TextEngine("intro_index",myclassinstance);
+      introductions=TextEngine("intro",myclassinstance);
+      strs=introductions+strs+TextEngine("각주리스트",myclassinstance);
 
 
 
 
       return strs;
     }
+
+
   
 
     const change_img=(event)=>{
@@ -104,7 +113,7 @@ const Main_Board=({content_title})=>{
       if(current_content.title!==title){
         
         console.log("기존과 다른 리덕스 이므로 dispathc 실행")
-       let data=await fetching_get_with_no_token(`${back_end_url}search/${title}`);
+       let data=await fetching_get_with_no_token(`${back_end_url}search/${title}`,redirect_handler);
         console.log("data:",data)
         if(data.success){
           
@@ -112,16 +121,18 @@ const Main_Board=({content_title})=>{
    
         //{content_id,title,content 로구성됨.}
 
-        dispatch({type:"Change_Content",content:{content_id:data.content_id,title:data.title,content:data.content,email:data.email,update_time:data.update_time}})
+        dispatch({type:"Change_Content",content:{content_id:data.content_id,title:data.title,content:data.content,email:data.email,update_time:data.update_time,grade:data.grade}})
+        set_admin(data.grade);
         }
+        
         else{
-
+       
           seterror(true);
           //alert("없는 문서입니다")
           //router.push("/")
         }
-
           return;
+   
       }
 
 
@@ -140,9 +151,7 @@ const Main_Board=({content_title})=>{
         check_in_db("img_store",idx,x,ref_arr[idx],0);
       })
 
-
     },[])
-
 
 
     useEffect(()=>{
@@ -176,7 +185,7 @@ const Main_Board=({content_title})=>{
           let small_areas=doc.getElementsByClassName("small_area")
           
   
-          let sup_hrefs=doc.getElementsByClassName("sup_href");
+          //let sup_hrefs=doc.getElementsByClassName("sup_href");
 
   
           Array.from(big_areas).map(x=>{
@@ -197,19 +206,16 @@ const Main_Board=({content_title})=>{
 
     return(
           <div className="lg:w-90p w-full">
-               { error ? <div>                
-                <div className=" flex w-full h-auto justify-between items-center border-solod border-[2px] border-black">
-                    <div className=" text-[35px] w-auto h-auto ml-[10px]">
-                          no found page
-                    </div>
-                    
-                  </div>    
-                    </div> 
+               { error ?  <Nothing/>
+             
                
                
                :
                <div className="w-full">
                 <div className="flex w-full h-auto justify-between items-center border-solod border-[2px] border-black">
+                    
+                    
+                    {check_grade ? <div className="w-full h-fit text-[5px]">관리자 권한에의해서 편집이 제한된 문서입니다.</div> : null }
                     <div className=" text-[35px] w-auto h-auto ml-[10px]">
                         {current_content.title}
                         <div className="text-[15px]">
@@ -227,7 +233,7 @@ const Main_Board=({content_title})=>{
                             onMouseLeave={(e)=>off_change_btn_color(e)} >
 
                 <div className="flex flex-col w-fit -fit">
-                            <img ref={star} ></img>
+                            <img ref={star}/>
                             </div>
                          
                         </button>
@@ -239,7 +245,7 @@ const Main_Board=({content_title})=>{
 
 
                         <div className="flex flex-col w-fit -fit">
-                            <img ref={edit} ></img>
+                            <img ref={edit}/>
                                 <div className="w-fit h-fit">편집</div>
                           </div>
                      
@@ -253,7 +259,7 @@ const Main_Board=({content_title})=>{
                       
 
                             <div className="flex flex-col w-fit -fit">
-                            <img ref={history} ></img>
+                            <img ref={history}/>
                             <div className="w-fit h-fit">역사</div> 
                             </div>
                       

@@ -1,8 +1,7 @@
 "use client"
-import { fetching_get_with_no_token } from "@/app/components/fetching";
 import Topic from "@/app/components/topic";
 import { usePathname } from "next/navigation"
-import { useEffect } from "react";
+
 
 
 

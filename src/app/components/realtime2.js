@@ -87,7 +87,7 @@ const RealTimeAnother=({data_from_rsc})=>{
 
     
     return(
-        <div className=" relative flex  justify-start bg-slate-200 w-full h-[35px]"
+        <div className=" relative flex  justify-start w-full h-[35px]"
         onMouseEnter={(e)=>mosuseover(e)}
         onMouseLeave={(e)=>mouseleave(e)}>
         <AnimatePresence>
@@ -98,20 +98,20 @@ const RealTimeAnother=({data_from_rsc})=>{
         exit={{opacity:0,y:-10}}
     
         transition={{duration:0.5}}
-        className="absolute ml-[10px]  w-full text-[20px]"
+        className="absolute ml-[10px] p-[5px] w-full text-[20px]"
         key={current_idx}>
-                {data_from_rsc.length!==0 ?`${current_idx}${data_from_rsc[current_idx].title}` : null}
+                {data_from_rsc.length!==0 ?`${current_idx+1}.${data_from_rsc[current_idx].title}` : null}
           </motion.div>
         </AnimatePresence>
         {
-            visible && <div className="w-full h-[200px] bg-white 
-            border-solid border-[1px] border-solid border-black rounded-3p z-50">
+            visible && <div className="w-full h-fit bg-white 
+            border-solid border-[1px] border-slate-300 z-50">
                 {data_from_rsc.map((x,idx)=>
                     <Link key={idx} href={`/currentversion/${encodeURIComponent(x.title)}`}>
-                    <div  id={idx} className="w-full my-[5px] ml-[5px] text-[15px]">
+                    <div  id={idx} className="w-full my-[5px] ml-[5px] text-[15px] p-[10px]">
 
-                        {idx+1}
-                       {x.title}
+                        {idx+1}  {x.title}
+                      
 
                     </div>
                     </Link>

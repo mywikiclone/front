@@ -1,8 +1,10 @@
 "use client"
-import { fetching_post__with_token, fetching_post_with_no_token } from "@/app/components/fetching";
+import { fetching_post__with_token_and_csrf} from "@/app/components/fetching";
+import { clear_redirect_path, set_redirect_path } from "@/app/reducers/redirect_path";
+
 import { useRouter } from "next/navigation";
-import { useRef } from "react"
-import { useDispatch } from "react-redux";
+import { useEffect, useRef } from "react"
+import { useDispatch, useSelector } from "react-redux";
 
 
 
@@ -14,13 +16,25 @@ const MakeDiscussion=()=>{
     let router=useRouter();
     let usedispatch=useDispatch();
     let introduction_texts=useRef(null)
-    const relogin_sign=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
+    const current_redirect_path=useSelector((state)=>state.current_redirect_path);
+    const redirect_handler=(text)=>{
+
+        usedispatch({type:"Change_User",userdata:{user_id:""}})
+        usedispatch(set_redirect_path(text));
+
+    }
     const makediscussion=async (event)=>{
         event.preventDefault();
         let title_to_send=title.current.value.trim();
 
-        console.log("title_to_send:",title_to_send);
-        let data=await fetching_post__with_token(`${back_end_url}topicsave`,{topic_title:title_to_send,subject_title:subject_title.current.value.trim(),deadline:Number(days.current.value.trim()),introduction_text:introduction_texts.current.value})
+
+    
+
+        title_to_send=title_to_send;
+        introduction_texts=introduction_texts.current.value;
+        subject_title=subject_title.current.value.trim()
+        let deadline=days.current.value.trim()
+        let data=await fetching_post__with_token_and_csrf(`${back_end_url}topicsave`,{topic_title:title_to_send,subject_title:subject_title,deadline:deadline,introduction_text:introduction_texts},redirect_handler)
 
 
         if(data.success){
@@ -29,20 +43,37 @@ const MakeDiscussion=()=>{
             router.push(`/discussion/${data.data.topic_id}`)
         }
         else{
-
-            if(data.msg===relogin_sign){
-
-                    usedispatch({type:"Change_User",userdata:{user_id:""}})
-
-                    router.push("/login")
-            }
+            /*if(data.msg===relogin_sign){
 
 
-            alert("제출 실패!")
+                usedispatch({type:"Change_User",userdata:{user_id:""}})
+                router.push("/login")
+            }*/
+            return ;
+
+
         }
+
        return ;
 
     }
+    useEffect(()=>{
+
+        usedispatch(clear_redirect_path())
+
+    },[])
+
+    useEffect(()=>{
+
+        if(current_redirect_path.path){
+            router.push(current_redirect_path.path);
+        }
+
+    },[current_redirect_path])
+
+
+
+
 
     return(
 

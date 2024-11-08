@@ -1,4 +1,8 @@
-class MyClass {
+import { Bakbak_One } from "next/font/google";
+import { txtfilter,video_filtering,img_src_filtering } from "./txtfilter";
+
+
+/*class MyClass {
   static big_number = 0;
 
 
@@ -160,15 +164,20 @@ class MyClass {
   static init_footnote_list(){
     this.foot_note_list=[];
   }
-}
+}*/
 
 
 
 
 
-const TextEngine=(text)=>{
+const TextEngine=(text,MyClass)=>{
 
    
+    text=txtfilter(text);
+
+
+    const backendurl=process.env.NEXT_PUBLIC_BACK_END_URL;
+
 
 
     //큰 요소들 모음.
@@ -232,7 +241,7 @@ const TextEngine=(text)=>{
             MyClass.init_intro_check();
 
 
-            console.log("인트로체크:",MyClass.get_intro_check());
+            
             return  "";
         }
 
@@ -340,7 +349,7 @@ const TextEngine=(text)=>{
 
 
     if(text.match(intro_free__detail_box_pattern)!==null){
-      console.log("introfreedetail")
+     
      text=text.replace(intro_free__detail_box_pattern,(match)=>{
         let middle_text=match.split("___");
         if(middle_text[1]==="끝"){
@@ -370,7 +379,7 @@ const TextEngine=(text)=>{
     }
     
     if(text.match(reg_exp_foot_note)!==null){
-      console.log("regexpfootnote")
+      
       text=text.replace(reg_exp_foot_note,(match)=>{
         //각주 처리 규칙 @각주가 들어갈 내용!각주 내용!@ 이런식으로 구성.
         let x=match.split("@");
@@ -393,13 +402,14 @@ const TextEngine=(text)=>{
     }
 
     if(text.match(img_pattern)!==null){    
-      console.log("imgpattern")
+    
       text=text.replace(img_pattern,(match)=>{
         
         let x=match.split("&&&");
         let links=linkpattern_apply(match);
+        let styles=stylingpattern_apply(match);
       
-      
+        links=img_src_filtering(`${backendurl}applyimg/${links}`);
         x[0]=`<img class="${styles}" src="${links}">`
         x[1]=""
         x[2]="</img>"
@@ -410,13 +420,13 @@ const TextEngine=(text)=>{
     }
 
     if(text.match(iframe_pattern)!==null){
-      console.log("iframe")
+    
       text=text.replace(iframe_pattern,(match)=>{
    
         let x=match.split("*");
         let links=linkpattern_apply(match);
         let styles=stylingpattern_apply(match);
-      
+        links=video_filtering(links);
         x[0]=`<iframe class="${styles}" src="${links}" allow="accelerometer;clipboard-write; encrypted-media; gyroscope; picture-in-picture">`
         x[1]=""
         x[2]="</iframe>"
@@ -429,7 +439,7 @@ const TextEngine=(text)=>{
 
     if(text.match(free_div_box_pattern)!==null){
 
-      console.log("freediv")
+   
       text=text.replace(free_div_box_pattern,(match)=>{
         //각주 처리 규칙 @각주가 들어갈 내용!각주 내용!@ 이런식으로 구성.
 
@@ -459,7 +469,7 @@ const TextEngine=(text)=>{
     }
 
     if(text.match(a_pattern)!=null){
-      console.log("apattern");
+     
       text=text.replace(a_pattern,(match)=>
       {
         let x=match.split("$$");
@@ -576,7 +586,7 @@ const TextEngine=(text)=>{
     }
 
 
-
+    
 
     if(MyClass.get_intro_check()){
  
@@ -586,7 +596,7 @@ const TextEngine=(text)=>{
       return "";
     }
 
-    console.log("틀밖으로 텍스트가 들어감.")
+   
     return text;
 
 
@@ -1002,7 +1012,7 @@ const show_window=()=>{
 
       if(match.match(y2)!=null){
 
-        console.log("group2:",match)
+     
         let x=match.split("&&&");
         let links=linkpattern_apply(match);
       
@@ -1017,9 +1027,8 @@ const show_window=()=>{
       if(match.match(y3)!=null){
         let x=match.split("*");
 
-        console.log("group3:",x);
         let links=linkpattern_apply(match);
-        x[0]=`<iframe class="${styles}" src="${links}" allow="accelerometer;clipboard-write; encrypted-media; gyroscope; picture-in-picture" >`
+        x[0]=`<iframe class="${styles}" src="${links}" allow="encrypted-media; gyroscope; referrerpolicy=strict-origin-when-cross-origin" >`
         x[1]=""
         x[2]="</iframe>"
         x=x.join(" ")
@@ -1031,7 +1040,7 @@ const show_window=()=>{
 
         let x=match.split("$$");
 
-        console.log("group4:",x);
+       
         let links=linkpattern_apply(match);
 
         x[0]=`<a href="${links}" class="${styles}">`

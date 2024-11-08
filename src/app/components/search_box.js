@@ -6,13 +6,14 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { fetching_get_with_no_token } from "./fetching"
 import { useDispatch } from "react-redux"
+import { txtfilter } from "./txtfilter"
 
 
 
 const Search_box=()=>{
     let [related_search_list,set_related_serach_list]=useState([]);
     let event_mem=useRef(null)
-    const usedispatch=useDispatch();
+    const dispatch=useDispatch();
     let [popup,setpopup]=useState(false)
     const popup_window=useRef(null);
     const router=useRouter();
@@ -20,7 +21,7 @@ const Search_box=()=>{
     let searchbox=useRef(null);
 
 
-
+    const redirect_handler=()=>{};
 
     const get_related_data=async(title)=>{
         
@@ -30,9 +31,8 @@ const Search_box=()=>{
         }
 
 
-       let res=await fetching_get_with_no_token(`${back_end_url}searchlogic/${title}`);
+       let res=await fetching_get_with_no_token(`${back_end_url}searchlogic/${title}`,redirect_handler);
 
-        console.log("data:",res.data);
         if(res.success){
   
             set_related_serach_list(res.data);
@@ -130,7 +130,7 @@ const Search_box=()=>{
     const random_search_event=async()=>{
         console.log("랜덤문서")
   
-        let data=await fetching_get_with_no_token(`${back_end_url}random`)
+        let data=await fetching_get_with_no_token(`${back_end_url}random`,redirect_handler)
         if(data.success){
   
 
@@ -159,6 +159,17 @@ const Search_box=()=>{
         }
       }
 
+      const on_change_btn_color=(event)=>{
+        event.target.classList.add("border-solid","border-[1px]","border-slate-300")
+        }
+      const off_change_btn_color=(event)=>{
+        event.target.classList.remove("border-solid", "border-[1px]", "border-slate-300")
+        }
+
+
+
+
+
       useEffect(() => {
         if (popup) {
             document.addEventListener('mousedown', handleClickOutside);
@@ -181,7 +192,7 @@ return(
 
     <div className="w-full relative h-fit">
         <div className="flex items-center">
-            <button className="flex justify-center items-center bg-white border-solid border-[1px] lg:border-l-[1px] border-l-0 border-slate-300 lg:rounded-lg rounded-none lg:h-[45px] h-[35px] w-[45px]" onClick={()=>{random_search_event()}}>⟳</button>
+            <button className="flex justify-center items-center bg-white border-solid  border-[1px] lg:border-l-[1px] border-l-0 border-slate-300 lg:rounded-lg rounded-none h-[35px] w-[35px]" onClick={()=>{random_search_event()}}>⟳</button>
             <form className="w-full h-fit" onSubmit={(e)=>{search_submit(e)}}>
        
             <input ref={searchbox} type="text"  id="search_box" autoComplete="off" className="h-[35px] outline-none lg:border-0 border-[1px] lg:border-r-[1px] border-r-0 lg:border-l-[1px] border-l-0 lg:w-[250px] w-full lg:ml-[10px] border-solid border-slate-300 ml-0"onChange={(event)=>handle_change(event)} placeholder="값을 입력하세요">
@@ -191,9 +202,9 @@ return(
 
         </div> 
         { popup && related_search_list.length>0 ? 
-            <div ref={popup_window} className={`absolute bottom-[${-50*related_search_list.length}px] flex flex-col lg:left-[52px] left-0 border-solid border-slate-200 border-[1px] rounded-3p bg-white  mt-[5px] shadow-xl lg:w-[250px] w-full z-50`}>
+            <div ref={popup_window} className={`absolute bottom-[${-50*related_search_list.length}px] flex flex-col lg:left-[43px] left-0 border-solid border-slate-200 border-[1px] rounded-3p bg-white  mt-[5px] shadow-xl lg:w-[250px] w-full z-50`}>
                 {related_search_list.map((x,idx)=>
-                    <Link  href={`/currentversion/${encodeURIComponent(x.title)}`}key={idx} className="w-full h-[50px] text-[15px] p-[10px] truncate" onClick={(event)=>click_search_submit(event)}>
+                    <Link  href={`/currentversion/${encodeURIComponent(x.title)}`}key={idx} className="w-full h-[50px] text-[15px] p-[10px] truncate" onClick={(event)=>click_search_submit(event)} onMouseEnter={(e)=>on_change_btn_color(e)} onMouseLeave={(e)=>off_change_btn_color(e)}>
                         {x.title}
                     </Link>
 

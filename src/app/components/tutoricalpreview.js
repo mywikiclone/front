@@ -1,6 +1,6 @@
 "use client"
 import {useEffect} from "react"
-const EditPreview=({text})=>{
+const Tutorial_Preview=({text,nums})=>{
 
    
 const change_img=(event)=>{
@@ -26,7 +26,7 @@ const change_img=(event)=>{
 
         console.log("nums:",nums);
       
-        let doc=document.getElementById("text-box")
+        let doc=document.getElementById(`${nums}`)
         doc.innerHTML=text
 
 
@@ -105,7 +105,7 @@ const change_img=(event)=>{
 
 
     return(
-    <div  id="text-box" className="flex flex-col lg:w-90p w-full h-55p overflow-auto ">
+    <div  id={`${nums}`} className="flex flex-col lg:w-90p w-full h-55p overflow-auto ">
 
 
     </div>
@@ -118,4 +118,4 @@ const change_img=(event)=>{
 }
 
 
-export default EditPreview;
+export default Tutorial_Preview;

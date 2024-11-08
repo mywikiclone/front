@@ -5,26 +5,37 @@ import React,{useEffect,useState,useRef} from 'react'
 import { useRouter } from "next/navigation"
 import { useSelector,useDispatch } from "react-redux"
 import dynamic from 'next/dynamic'
-import { get_db,get_data_from_db,add_data_in_db,check_in_db } from './indexdb'
-import { fetching_post__with_token,fetching_get_with_no_token} from './fetching'
+import { check_in_db } from './indexdb'
+import { fetching_get_with_no_token, fetching_post__with_token_and_csrf} from './fetching'
 
 import TextEngine from './textengine'
+import Nothing from './nothing'
+
+import MyClass from './MyClass'
+import { clear_redirect_path, set_redirect_path } from '../reducers/redirect_path'
 
 const Edit_By_Id = ({content_id}) => {
 
+ 
 
-
+  let [error,set_error]=useState(false)
+  const myclassinstance=new MyClass();
+  const current_redirect_path=useSelector((state)=>state.current_redirect_path);
   const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
-  const relogin_error_msg=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
+ 
   const DnynamicPreview=dynamic(()=>import('./editpreview'),{loading:()=><div>...loading</div>,ssr:false})
   //<Preview text={preview_text}/>
 
   const current_content=useSelector((state)=>state.current_content);
   const dispatch=useDispatch();
-  const current_search_box=useSelector((state)=>state.current_search_box);
-  let test=[];
+  const redirect_handler=(text)=>{
+    dispatch({type:"Change_User",userdata:{user_id:""}})
+    dispatch(set_redirect_path(text));
 
-  let ex=current_content.content.split("/n");
+  }
+
+ 
+
 
   const route=useRouter();
   const tags_for_edit={
@@ -47,6 +58,10 @@ const Edit_By_Id = ({content_id}) => {
   const current_small_list_box=useRef(null);
   let [big_titles,set_big_titles]=useState([])
   let[small_titles,set_small_titles]=useState([]);
+
+
+ 
+
   const [show_preview,set_show_preivew]=useState(false);
   const [preview_text,set_preview_text]=useState("");
   const [titles,set_titles]=useState("");
@@ -122,15 +137,15 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
    
       let texts=x.value;
 
-      texts=TextEngine(texts);
+      texts=TextEngine(texts,myclassinstance);
 
 
 
       strs+=texts;
     })
-    intro_index=TextEngine("intro_index");
-    introductions=TextEngine("intro");
-    strs=introductions+strs+TextEngine("각주리스트");
+    intro_index=TextEngine("intro_index",myclassinstance);
+    introductions=TextEngine("intro",myclassinstance);
+    strs=introductions+strs+TextEngine("각주리스트",myclassinstance);
     set_preview_text(strs)
     set_show_preivew(true)
     set_deafult_view(false)
@@ -366,38 +381,43 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     console.log("업데이트 되는값:",strs);
     //api 로 strs보내기!
 
+    let title_to_save=titles;
+
+    strs=strs;
 
     
-    let res_data=await fetching_post__with_token(`${back_end_url}update`,{content_id:content_id,title:titles,content:strs})
-
+    let res_data=await fetching_post__with_token_and_csrf(`${back_end_url}update`,{content_id:content_id,title:title_to_save,content:strs},redirect_handler)
 
       if(res_data.success){
           
           dispatch({type:"Change_Content",content:{
           content_id:content_id,
-          title:titles,
+          title:title_to_save,
           content:strs,
           update_time:res_data.data,
-          email:current_content.email
+          email:current_content.email,
+          grade:current_content.grade
           }})
 
      
-           route.push(`/currentversion/${encodeURIComponent(titles)}`);
+           route.push(`/currentversion/${encodeURIComponent(title_to_save)}`);
           
       }
       else{
 
-        if(res_data.msg===relogin_error_msg){
+
+        alert("권한부족 혹은 알수없는 오류입니다");
+
+        /*if(res_data.msg===relogin_error_msg){
           dispatch({type:"Change_User",userdata:{user_id:""}})
           route.push("/login")
 
-        }
-        else{
-          alert("알수없는 오류발생")
-        }
+        }*/
+          set_error(false);
+
+          return ;
       
       }
-     return;
     
     }
 
@@ -408,7 +428,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       console.log("id:",id,typeof(id))
       console.log("id2:",current_content.content_id,typeof(current_content.content_id));
 
-      datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`)
+      datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`,redirect_handler)
 
 
       if(datas.success){
@@ -419,18 +439,15 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       //{content_id,title,content 로구성됨.}
 
 
-      dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content,email:datas.email,update_time:datas.update_time}})
+      dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content,email:datas.email,update_time:datas.update_time,grade:datas.grade}})
       //dispatch({type:"Change_Content",content:{content_id:datas.content_id,title:datas.title,content:datas.content}})
      
-      console.log("dispatch in edit");
       set_start_text(datas.content.split("\n"))
-
+  
       set_titles(datas.title);
       }
       else{
-        console.log("여기서발생하는건가?")
-        alert("없는 문서입니다!")
-        route.push("/")
+        set_error(true)
 
       }
      return ;
@@ -438,11 +455,13 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
     }
     else{
-      console.log("기존에잇던거")
+    
       datas=current_content.content;
-      console.log("datas:",datas);
+     
       set_titles(current_content.title);
       set_start_text(datas.split("\n"))
+
+     
     }
 
     //왜인지는 모르겟는대 아래맵에서 start_text를 참조하지않고 reducr의 current_content의 content혹은 current_content.content.split(~~) 혹은 content_arr
@@ -455,7 +474,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     //첫번쨰값은 무조건이전state값이 달려나온다 나머지값은 바뀐값으로 나오는대...
     //값자체는 store든 state는 업데이트가되는대 랜더링 되는 화면이상핟. useeffect는 정상작동하고 왜지..?
     //reducer->state로가는 시간차가 머ㅜㄴ가있나??그렇다쳐도 current_content자체가 바뀌는 상황인대 처음부터 재랜더링되는게맞지않나?
-    console.log("somethingtocheck");
+    
 
     
 
@@ -463,17 +482,32 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   }
 
   useEffect(()=>{
-    console.log("searbh_box:",current_search_box.popup)
+   
+    dispatch(clear_redirect_path());
     setting_start_text(content_id)
-    svg_url_arr.map((x,idx)=>{
-
-      check_in_db("img_store",idx,x,img_useref_list[idx],3)
-
-
+    img_useref_list.forEach((x,idx)=>{
+      if(x.current){
+      check_in_db("img_store",idx,svg_url_arr[idx],x,3)
+      }
     })
-    console.log("default_view:",default_view);
+
+
 
   },[])
+
+
+  useEffect(()=>{
+
+    if(current_redirect_path.path){
+
+
+      route.push(current_redirect_path.path);
+
+    }
+
+  },[current_redirect_path])
+
+
 
 
   const show_border_line=(event,check)=>{
@@ -484,59 +518,40 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     }
   }
 
-
+/*
+ 이걸로 조건부 렌더링을 걸어두면은 useref값이 늦게들어간다 왜인지는모르겟다시발...
+*/ 
 
   return (
     <div className="flex w-full h-screen  lg:items-center items-start lg:justify-center justify-start ">
-    <div className=" flex flex-col  items-center border-[2px] text-[24px] w-full h-95p">
-      <div className=" text-left h-[75px]  text-[50px] lg:w-90p w-full">{current_content.title}
-       
-      </div>
-      <div className="flex justify-center lg:w-90p w-full h-[50px] bg-blue-200">
-        <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
-      <button onClick={()=>show_window()} className="text-[20px]">
-          미리보기
-        </button>
-        <button  className="text-[20px]"onClick={()=>show_compiler()}>
-          편집기
-        </button>
-        </div>
-        <div className="flex w-1/2 h-[25px] bg-blue-200  justify-evenly ">
-       
-        <button
-          onClick={() => func("bold")}
-    
-          className= ' h-[25px] w-[25px] border-2 border-black' 
-        >
-                     <img
-              ref={bold}
-            />
-        </button>
-        <button
-          onClick={() => func("italic")}
-          
-          className= ' h-[25px] w-[25px] border-2 border-black' 
-        >
-                               <img ref={italic}
-              
-            />
-        </button>
-        <button
-          onClick={() =>func("strike")}
+    {error ?  <Nothing/> :
+  
 
-          className= ' h-[25px] w-[25px] border-2 border-black'
-        >
-                               <img
-             ref={strike}
-            />
-        </button>
+    <div className=" flex flex-col  items-center  text-[24px] w-full h-95p">
       
-
-
-
-
-
+      <div className=" h-[75px]  flex flex-col justify-center  lg:w-90p w-full">
+         <div  className="text-[30px] h-fit w-full border-solid border-[1px]">{current_content.title}</div>
+      </div>
+      <div className="flex justify-center items-center lg:w-90p w-full h-[50px] bg-white border-[1px] border-solid border-b-0">
+        <div className="flex w-1/2 h-[25px]  mr-[20px] justify-evenly ">
+          <button onClick={()=>show_window()} className="text-[20px]">
+            미리보기
+          </button>
+          <button  className="text-[20px]"onClick={()=>show_compiler()}>
+            편집기
+          </button>
         </div>
+        <div className="flex w-1/2 h-[25px] justify-evenly ">
+        <button onClick={() => func("bold")} className= 'h-[25px] w-[25px] border-[1px] rounded-3p border-solid border-slate-300' >
+              <img ref={bold}/>
+        </button>
+        <button onClick={() => func("italic")} className= 'h-[25px] w-[25px] border-[1px] rounded-3p border-solid border-slate-300' >
+            <img ref={italic}/>
+        </button>
+        <button onClick={() =>func("strike")} className= 'h-[25px] w-[25px] border-[1px] rounded-3p border-solid border-slate-300'>
+          <img ref={strike}/>
+        </button>
+      </div>
 
       </div>
 
@@ -605,9 +620,11 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       )
       }
       <div className="lg:w-90p w-full flex justify-end ">
-      <button  onClick={(event)=>save_text(event)}className="border-[2px] border-solid border-slate-200 bg-blue-100">저장하기</button>
+      <button  onClick={(event)=>save_text(event)}className="border-[2px] border-solid rounded-3p border-slate-200">저장하기</button>
       </div>
     </div>
+  }
+    
     </div>
   )
 

@@ -8,7 +8,7 @@ const Main=()=>{
 
 
 
-    return(<div>
+    return(<div className="w-full h-fit">
 
 
         <Disucssion/>

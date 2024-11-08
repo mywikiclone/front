@@ -1,18 +1,19 @@
 "use client"
 import { fetching_post_with_no_token } from "@/app/components/fetching";
 import { useRouter } from "next/navigation";
-import { useRef,useState } from "react"
-const Assign_page=()=>{
+import { useRef,useState,useEffect } from "react"
+import {useSelector } from "react-redux";
+const PasswordChange=()=>{
+
 
     let router=useRouter();
-    
     let mail_check=useRef(null);
     let email_number_check=useRef(null);
     let timer=useRef(null)
     let worker_ref=useRef(null);
     let refresh=useRef(null);
     let code=useRef(null);
-    let id_exist_box=useRef(null);
+
     let Id=useRef(null);
     let Password=useRef(null);
     let PasswordCheck=useRef(null);
@@ -20,26 +21,25 @@ const Assign_page=()=>{
     let check_password_text=useRef(null);
     let id_check_text=useRef(null);
     let [password_check,set_password_check]=useState(false);
-    let [email_check,set_email_check]=useState(false);
+    
     let [auth_code,set_auth_code]=useState(false);
-    let [id_exist,set_id_exist]=useState(true);
-    let [id,set_id]=useState("")
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
-    const id_exist_msg=process.env.NEXT_PUBLIC_ID_EXIST_SIGN;
+
+    let [login_status,set_login_status]=useState("");
+    const current_user_data=useSelector((state)=>state.current_userdata)
 
 
-    const handle_redirect=(text)=>{
-        
+    const redirect_handler=(text)=>{
+
     }
-
 
 
     const timer_function=async ()=>{
 
         let data=await fetching_post_with_no_token(back_end_url+"requestmailauth",{
-            mail_code:Id.current.value
-        },handle_redirect)
+            mail_code:login_status
+        },redirect_handler)
 
         if(data.success){
 
@@ -65,17 +65,18 @@ const Assign_page=()=>{
         
             worker.postMessage({ type: 'start-timer' });
 
-
-            return ;
-
         }
-        
+        /*else{
+
+            console.log(data);
+            alert("오류발생 다시시도해주세요")
+        }*/
        return ;
 
     }
 
     const refresh_timer=()=>{
-        
+        console.log("타이머다시지작.")
         timer.current.textContent="2:00"
         worker_ref.current.terminate();
         worker_ref.current.onmessage=null;
@@ -87,32 +88,14 @@ const Assign_page=()=>{
 
 
     const check_email_user=()=>{
-        if(email_check&&!id_exist){
-        set_id(Id.current.value)
+  
+        console.log("사용자이메일:",login_status);
         mail_check.current.classList.add("hidden")
         email_number_check.current.classList.remove("hidden")
         timer.current.classList.remove("hidden")
         refresh.current.classList.remove("hidden")
-        timer_function();}
-        else{
-
-            mail_check.current.classList.remove("hidden")
-            email_number_check.current.classList.add("hidden")
-            timer.current.classList.add("hidden")
-            refresh.current.classList.add("hidden")
-
-
-            if(!email_check){
-                alert("아이디를 체크해주세요")
-                return;
-            }
-          
-            if(id_exist){
-                alert("이미 존재하는 회원입니다")
-                return;
-            }
-          
-        }
+        timer_function();
+   
 
     }
 
@@ -140,59 +123,30 @@ const Assign_page=()=>{
 
 
 
-    const id_validation=()=>{
-
-        if(Id.current.value!==""){
-            
-        
-            if(event_mem.current!==null){
-            
-                clearTimeout(event_mem.current);
-            }
-    
-            event_mem.current=setTimeout(()=>{check_id(Id.current.value)},300)
-
-           // console.log(event_mem.current)
-        }
-        else{
-            set_email_check(false)
-        }
-    }
 
 
 
-    const check_id=(text)=>{
-        if(text.match(regex)===null){
 
-            id_check_text.current.classList.remove("invisible")
-            set_email_check(false)
-        }
-        else{
-            id_check_text.current.classList.add("invisible")
-            set_email_check(true);
-        }
-
-    }
 
 
     const auth_number_check=async(event)=>{
         event.target.textContent="확인중 ..."
         let data=await fetching_post_with_no_token(back_end_url+"mailauth",{
-            email:Id.current.value,
+            email:login_status,
             code:code.current.value
-        },handle_redirect)
+        },redirect_handler)
         if(data.success){
                 event.target.textContent="O"
                 worker_ref.current.terminate();
                 worker_ref.current.onmessage=null;
                 set_auth_code(true);
-
+                return ;
         }
-        else{
+        
             event.target.textContent="X"
             alert("값이 다릅니다")
 
-        }
+        
     }
 
 
@@ -212,55 +166,35 @@ const Assign_page=()=>{
 
     }
 
-    const check_id_exist=async(event)=>{
 
-        event.target.textContent="잠시만 기다려주세요..."
-        let data=await fetching_post_with_no_token(back_end_url+"idcheck",{email:Id.current.value,passowrd:""},handle_redirect)
-
-        if(data.success){
-
-        id_exist_box.current.classList.add("invisible");
-        set_id_exist(false);
-        event.target.textContent="중복확인통과"
-
-        return ;}
-
-
-        
-        event.target.textContent="중복되는 아이디입니다."
-        id_exist_box.current.classList.remove("invisible");
-        set_id_exist(true);
-        return ;
-        
-
-        
-
-
-    }
 
     const submit_func=async (event)=>{
         event.preventDefault();
-        if(password_check&&email_check&&auth_code&&!id_exist){
+        if(password_check&&auth_code){
           
-            let data=await fetching_post_with_no_token(back_end_url+"assign",{email:Id.current.value,password:Password.current.value},handle_redirect)
+            let data=await fetching_post_with_no_token(back_end_url+"changepassword",{email:login_status,password:Password.current.value},redirect_handler)
             if(data.success){
 
 
-                router.push("/login")
+                router.push("/")
 
             }
-            return ;
+            /*else{
+        
+                if(!auth_code){
+                    alert("인증코드를 확인해주세요")
+                    return ;
+                }
+                if(!password_check){
+                    alert("비밀번호를 체크해주세요")
+                    return ;
+                }
 
+
+            }*/
+           return ;
         }
         else{
-            if(!email_check){
-                alert("이메일 형식을 해주세요")
-                return ;
-            }
-            if(id_exist){
-                alert("id중복여부를 체크해주세요")
-                return ;
-            }
             if(!auth_code){
                 alert("인증코드를 확인해주세요")
                 return ;
@@ -270,29 +204,49 @@ const Assign_page=()=>{
                 return ;
             }
 
-           
+
 
         }
-        return ;
-      
+       return ;
     }
+
+ 
+
+
+
+    
+
+    useEffect(()=>{
+        
+        console.log(current_user_data.user_id);
+        if(current_user_data.user_id!==""){
+            set_login_status(current_user_data.user_id);
+            return ;
+        }
+
+        else{
+
+        router.push("/login");
+        return ;
+        
+        }
+
+        
+ 
+    },[])
+
+
+
+
+
 
     return(
 
         <div className="w-full h-full flex flex-col items-center ">
-        <div className="text-[20px]">회원가입</div>
+        <div className="text-[20px]">비밀번호 바꾸기</div>
         <div className="w-fit h-fit">
             <div className="w-fit h-fit flex flex-col " >
-                <div className="flex flex-col mb-[5px] text-[15px] w-[400px]">
-                    <div className="mb-[5px] w-fit h-fit">Email</div>
-                    <input type="email" className="outline-none  border-solid border-slate-300 border-[1px] rounded" onChange={()=>id_validation()} ref={Id}></input>
-                    
-                    <div className="flex w-fit h-fit">
-                        <div className="text-[15px] w-fit h-fit" onClick={(event)=>{check_id_exist(event)}}>중복체크</div>
-                        <div  ref={id_exist_box} className=" ml-[10px] text-[15px] text-red-400 invisible w-fit h-fit">이미 가입한 회원입니다.</div>
-                    </div>
-                    <div  ref={id_check_text} className="text-[15px] text-red-400 invisible w-fit h-fit">이메일 형식으로 해주세요</div>
-                </div>
+                
 
 
 
@@ -341,5 +295,4 @@ const Assign_page=()=>{
     )
 }
 
-
-export default Assign_page;
+export default PasswordChange;

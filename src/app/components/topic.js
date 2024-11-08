@@ -1,12 +1,13 @@
 import { useEffect,useState,useRef } from "react"
-import { fetching_get_with_no_token, fetching_post__with_token, fetching_post_with_no_token } from "./fetching"
+import { fetching_get_with_no_token, fetching_post__with_token_and_csrf} from "./fetching"
 import { motion } from "framer-motion"
 import DiscussionPreview from "./discussionpreview"
 import Link from "next/link"
 import { useSelector,useDispatch } from "react-redux"
-import { Denk_One } from "next/font/google"
-import Edit_By_Id from "./edit_by_id"
 import { useRouter } from "next/navigation"
+import Nothing from "./nothing"
+import { clear_redirect_path, set_redirect_path } from "../reducers/redirect_path"
+
 
 
 const Topic=({topic_id})=>{
@@ -14,61 +15,40 @@ const Topic=({topic_id})=>{
 
 
     const current_discussion=useSelector((state)=>state.current_discussion);
-
+    const current_redirect_path=useSelector((state)=>state.current_redirect_path);
     const dispatch=useDispatch();
 
-
+    const [error,set_error]=useState(false)
     const edit_box=useRef(null);
     const router=useRouter();
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL
     const end_point=useRef(null);
-    let [comment_list,set_comment_list]=useState([]);
     let save_btn=useRef(null);
-    let [discussion,setting_discussion]=useState(null);
-    let [click_num,set_click_num]=useState(0);
-    let [end,set_end]=useState(false);
     let [show,set_show]=useState(true)
     let [preview,set_preview]=useState(false);
     let [text,set_text]=useState([]);
     const reqlogin_msg=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
-
-
-
-
     const comment_list_box=useRef(null);
-    const get_comments=async()=>{
 
 
-       let data=await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}/${click_num}`)
-
-       if(data.success){
-        data.data.map((x)=>{
-            console.log("타입:",typeof(x.create_Time))
-        })
-        set_comment_list(data.data);
-
-
-        return ;
-       }
-
-       set_comment_list([]);
-       return ;
+    const redirect_handler=(text)=>{
+        dispatch({type:"Change_User",userdata:{user_id:""}})
+        dispatch(set_redirect_path(text));
 
     }
+
     const savecomment=async()=>{
          
             save_btn.current.disabled=true;
-            let disables=await fetching_get_with_no_token(`${back_end_url}timecheck/${topic_id}`)
-            console.log("test:",disables.data);
-            
-            if(disables.success && disables.data!=null){
+            let disables=await fetching_get_with_no_token(`${back_end_url}timecheck/${topic_id}`,redirect_handler)
+            if(!disables.success){
                 alert("마감");
                 return ;
             }
           
-       
-                
-            let data=await fetching_post__with_token(`${back_end_url}savecomment`,{topic_id:topic_id,comment_content:text})
+            //삭제된경우의 에러를 생각해줘야될거같은대.
+         
+            let data=await fetching_post__with_token_and_csrf(`${back_end_url}savecomment`,{topic_id:topic_id,comment_content:text},redirect_handler)
                 if(data.success){
 
                     make_child_list([data.data]);
@@ -93,7 +73,17 @@ const Topic=({topic_id})=>{
 
 
                 else{
-                    if(data.msg===reqlogin_msg){
+
+                   /* if(data.msg===reqlogin_msg){
+
+                        dispatch({type:"Change_User",userdata:{user_id:""}})
+                        router.push("/login")
+                    }*/
+
+
+
+                    set_error(false);
+                    /*if(data.msg===reqlogin_msg){
                         setTimeout(()=>{save_btn.current.disabled=false
                             
                         },1000)
@@ -101,17 +91,13 @@ const Topic=({topic_id})=>{
                         router.push("/login")
                         return ;
                     
-                    }
+                    }*/
 
-
-
-
-
-                    alert("모종의이유로실패")
-                    setTimeout(()=>{save_btn.current.disabled=false
+                    //alert("모종의이유로실패")
+                    /*setTimeout(()=>{save_btn.current.disabled=false
                                 
                     },1000)
-
+                    */
                 }
     
             
@@ -244,7 +230,7 @@ const Topic=({topic_id})=>{
     const show_more=async()=>{
 
 
-        let data= await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}`)
+        let data= await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}`,redirect_handler)
 
         if(data.success){
             
@@ -256,9 +242,6 @@ const Topic=({topic_id})=>{
             return ;
         }
 
-       
-        set_end(true);
-        console.log("fail");
         
         
         return ;
@@ -266,9 +249,9 @@ const Topic=({topic_id})=>{
     }
     const change_color=(targets,bools)=>{
         if(bools){
-        targets.className="flex items-center border-[1px] bg-slate-100 border-solid border-slate-500  text-[20px]"}
+        targets.className="flex items-center border-[1px] bg-white border-solid border-black  text-[20px]"}
         else{
-            targets.className="flex items-center border-[1px] bg-slate-100 border-solid border-slate-200  text-[20px]"
+            targets.className="flex items-center border-[1px] bg-white border-solid border-slate-400  text-[20px]"
         }
     }
 
@@ -291,7 +274,7 @@ const Topic=({topic_id})=>{
         console.log("토픽체크:",topic_id!=current_discussion.topic_id)
         if(topic_id!=current_discussion.topic_id){
             
-            let data=await fetching_get_with_no_token(`${back_end_url}getdiscussion/${topic_id}`);
+            let data=await fetching_get_with_no_token(`${back_end_url}getdiscussion/${topic_id}`,redirect_handler);
             if(data.success){
 
                 let now=new Date();
@@ -312,11 +295,13 @@ const Topic=({topic_id})=>{
                 return;
 
             }
+
+            set_error(true);
             return;
 
         }
 
-
+        //set_error(true);
         return;
 
 
@@ -335,13 +320,23 @@ const Topic=({topic_id})=>{
 
 
     useEffect(()=>{
-
-        console.log("topic_id:",topic_id);
+        dispatch(clear_redirect_path());
+    
         set_discussion(topic_id)
 
     },[])
     useEffect(()=>{
-        console.log("discussion:",current_discussion);
+
+        if(current_redirect_path.path){
+            router.push(current_redirect_path.path);
+        }
+
+
+
+
+    },[current_redirect_path])
+    useEffect(()=>{
+    
         if(current_discussion.topic_id!=0){
         
         show_more();
@@ -354,15 +349,19 @@ const Topic=({topic_id})=>{
 
 
     return (
+        <div id="main realtive" className="w-full ">
+        { error ? <Nothing/> :
 
+        
 
-        <div id="main realtive" className="w-full flex flex-col justify-center items-center text-[15px]">
+         <div  className="w-full flex flex-col justify-center items-center text-[15px]">
+            
             <div className="w-90p mt-[5px] flex flex-col ">
-                <Link className="mb-[5px] text-[30px] text-[25px] " href={`/currentversion/${encodeURIComponent(current_discussion.subject_title)}`}>{current_discussion.subject_title} (토론)</Link>
-                <div className="text-[20px]">{current_discussion.topic_title}</div>
-                <div className="text-[20px]">{current_discussion.member_id}</div>
-                <div className="text-[20px]">{current_discussion.deadline}에 마감됩니다.</div>
-                <div className="text-[15px]">간단한 소개글:{current_discussion.introduction_text}</div>
+                <Link className="mb-[5px] text-[30px] text-[25px] " href={`/currentversion/${encodeURIComponent(current_discussion.subject_title)}`}>{current_discussion.topic_title} (토론)</Link>
+                <div className="text-[15px]">작성자:{current_discussion.member_id}</div>
+                <div className="text-[15px]">{current_discussion.deadline}에 마감됩니다.</div>
+                
+                <div className="w-full h-fit flex flex-col"><div className="mb-[5px]">설명</div><div className=" w-full h-fit p-[5px] border-solid border-[2px]">{current_discussion.introduction_text}</div></div>
                 
             </div>
             <div id="comment_list" className="mb-[20px] w-90p flex flex-col " ref={comment_list_box}>
@@ -372,12 +371,12 @@ const Topic=({topic_id})=>{
             <div className="fixed lg:w-52.5p w-full flex flex-col bottom-[0px] ">
             <div id="btnarea" className="ml-auto flex justify-end "> 
                 
-                <button ref={save_btn} onClick={()=>savecomment()}className="flex items-center border-[1px] bg-slate-100  border-solid border-slate-200 text-[20px]">save</button>
-                <button onClick={(event)=>setting_preview2(event)}className="flex items-center border-[1px] bg-slate-100  border-solid border-slate-500 text-[20px]">edit</button>
-                <button onClick={(event)=>setting_preview(event)} className="flex items-center border-[1px] bg-slate-100  border-solid border-slate-200 text-[20px]">preview</button>
-                <button className="flex items-center border-[1px] border-solid border-slate-200 text-[20px] bg-slate-100  lg:mr-0 mr-[10px]"onClick={()=>change_show()}>x</button>
+                <button ref={save_btn} onClick={()=>savecomment()}className="flex items-center border-[1px] bg-white  border-solid border-slate-400 text-[20px]">저장</button>
+                <button onClick={(event)=>setting_preview2(event)}className="flex items-center border-[1px] bg-white  border-solid border-slate-400   text-[20px]">편집</button>
+                <button onClick={(event)=>setting_preview(event)} className="flex items-center border-[1px] bg-white  border-solid border-slate-400   text-[20px]">미리보기</button>
+                <button className="flex items-center border-[1px] border-solid border-slate-400  text-[20px] bg-white  mr-0"onClick={()=>change_show()}>x</button>
             </div>   
-            {preview ?  <DiscussionPreview text={text} show={show}/> : <motion.textarea id="text" ref={edit_box} onChange={(event)=>textsetting(event)} className="relative bg-slate-100 border-solid border-slate-300 border-[1px]"
+            {preview ?  <DiscussionPreview text={text} show={show}/> : <motion.textarea id="text" ref={edit_box} onChange={(event)=>textsetting(event)} className="relative outline-none bg-white border-solid border-slate-400  border-[1px]"
                      variants={vars}
 
                      initial={show ? "open":"closed"}
@@ -393,11 +392,13 @@ const Topic=({topic_id})=>{
             } 
            
            
-            </div>
+           </div> 
 
-    
+            
         </div>
-
+        
+        }
+        </div>
 
     )
 
@@ -411,7 +412,6 @@ export default Topic;
 /*
 <Link href={`/discussion/${}`}>{topic_title}</Link>*/ 
 /*
-
 
 
 

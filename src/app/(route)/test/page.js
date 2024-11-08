@@ -18,20 +18,19 @@ const Testing=()=>{
 
     }
 
-    useEffect(()=>{
-            console.log("testing")
-            func()
 
 
-    },[])
+
+
 
 
     return(
 
-        <div>
-            fdsfdf</div>
+  
+            <img src="https://localhost:8080/logout"></img>
 
 
+       
     )
 }
 

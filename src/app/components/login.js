@@ -1,17 +1,23 @@
 "use client"
 import { useRef } from "react"
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { set_cookie } from "./action";
+import { useDispatch,useSelector} from "react-redux";
+
 import {fetching_post__with_token_forlogin} from "./fetching";
+
 const Login=()=>{
 
     let Id=useRef(null);
     let Password=useRef(null);
     let usedispatch=useDispatch();
+    const current_redirect_path=useSelector((state)=>state.current_redirect_path)
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL
     const router=useRouter();
-    const none_member_sign=process.env.NEXT_PUBLIC_NONE_MEMBER_SIGN;
+    const handle_redirect=(text)=>{
+
+       
+    }
+
     const loginevent=async(event)=>{
         console.log("submit");
         event.preventDefault();
@@ -21,26 +27,16 @@ const Login=()=>{
 
         let res=await fetching_post__with_token_forlogin(`${back_end_url}firlogin`,{email:id,
             password:password
-        })
+        },handle_redirect)
 
         if(res.success){
-           
+
             usedispatch({type:"Change_User",userdata:{user_id:id}})
             router.push("/")
         }
         else{
-
-
-            if(res.msg===none_member_sign){
-
-                alert("없는 회원입니다");
-
-            }
-
             Id.current.value=""
             Password.current.value=""
-
-            alert("로그인 실패!")
 
         }
 

@@ -1,36 +1,20 @@
 import React,{useEffect,useState,useRef} from 'react'
 //import Preview from "./preview"
 
-import { useRouter } from "next/navigation"
-import { useSelector,useDispatch } from "react-redux"
+
 import dynamic from 'next/dynamic'
 import { check_in_db } from './indexdb'
-import { fetching_post__with_token_and_csrf} from './fetching'
+
 
 import TextEngine from './textengine'
-import { clear_redirect_path,set_redirect_path } from '../reducers/redirect_path'
-
-const Edit_Main = () => {
-
-  const redirect_handler=(text)=>{
-    dispatch({type:"Change_User",userdata:{user_id:""}})
-    dispatch(set_redirect_path(text));
-    
-  }
+import MyClass from './MyClass'
 
 
+const Edit_Tutorial = ({ex_text}) => {
+  
+  const DnynamicPreview=dynamic(()=>import('./tutoricalpreview'),{loading:()=><div>...loading</div>,ssr:false})
 
-
-  const dispatch=useDispatch();
-  const title_input=useRef(null);
-  const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
-
-  const current_user_data=useSelector((state)=>state.current_userdata);
-  const current_redirect_path=useSelector((state)=>state.current_redirect_path);
-  const DnynamicPreview=dynamic(()=>import('./editpreview'),{loading:()=><div>...loading</div>,ssr:false})
-  //<Preview text={preview_text}/>
-
-  const route=useRouter();
+  const myClassInstance = new MyClass();
   const tags_for_edit={
     bold:"<b></b>",
     strike:"<s></s>",
@@ -39,6 +23,8 @@ const Edit_Main = () => {
 
   }
   //const [current_box,set_current_box]=useState(1);-->usestate는 값이바뀔떄마다 리랜더링발생
+  const [randomInt,set_random_int]=useState(0);
+  
   const current_box=useRef(1);
   const [show_preview,set_show_preivew]=useState(false);
   const [preview_text,set_preview_text]=useState("");
@@ -60,7 +46,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
   const show_window=()=>{
     compiler_data.current=[];
-    let txtarea=document.getElementsByClassName("texts")
+
+    let txtarea=document.getElementsByClassName(`text-${randomInt}`)
     let strs="";
     let introductions=""
     let intro_index=""
@@ -70,15 +57,16 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
    
       let texts=x.value;
 
-      texts=TextEngine(texts);
+      texts=TextEngine(texts,myClassInstance);
 
 
 
       strs+=texts;
     })
-    intro_index=TextEngine("intro_index");
-    introductions=TextEngine("intro");
-    strs=introductions+strs+TextEngine("각주리스트");
+    intro_index=TextEngine("intro_index",myClassInstance);
+    introductions=TextEngine("intro",myClassInstance);
+    strs=introductions+strs+TextEngine("각주리스트",myClassInstance);
+    
     set_preview_text(strs)
     set_show_preivew(true)
     set_deafult_view(false)
@@ -96,8 +84,6 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       let beforevalue=txtvalue.substring(0,cursorposition);
       let aftervalue=txtvalue.substring(cursorposition,txtvalue.length);
     
-      console.log("txtvalue:",txtvalue)
-      console.log("cursorposition:",cursorposition)
       beforevalue+=tags_for_edit[strs];
   
   
@@ -133,7 +119,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
     let doc=event.target;
     doc.style.height="auto"
-    //console.log(doc.height);
+  
+    
     let x=doc.scrollHeight+"px"
     doc.style.height=x;
   }
@@ -143,7 +130,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     let reg_exp_small_title=/=-=.*?=-=/
     let intro_free_box_pattern=/====.*?====/g;
 
-    console.log("ayto_end_text:",text);
+ 
+    
 
 
     if(text.match(intro_free_box_pattern)!=null&&text.split("====")[1]!=="끝"){
@@ -171,9 +159,20 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   }
 
 
+  function getRandomInt(min, max) {
+   
+    
+    return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+
+
+
+
+
 
   const make_new_rows=(auto_end_text,parent,row_number)=>{
-    let text_area_arr=document.querySelectorAll(".texts");
+    let text_area_arr=document.querySelectorAll(`.text-${randomInt}`);
     let row_number_div_arr=document.querySelectorAll(".row_box_num");
     let fir_box=document.createElement("div")
     let second_box=document.createElement("div")
@@ -201,7 +200,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
    //third_box.setAttribute("data-id",`${row_number+1}`)
     third_box.id=`${row_number+1}`
     third_box.spellcheck=false
-    third_box.className="texts w-full h-fit resize-none outline-0 text-[15px]"
+    third_box.className=`text-${randomInt} w-full h-fit resize-none outline-0 text-[15px]`
     third_box.rows="1";
     third_box.textContent=auto_end_text;
     third_box.addEventListener("keydown",add_row_num)
@@ -222,7 +221,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   }
 
   const add_row_num=(event)=>{
-    if(event.keyCode===13){
+   /* if(event.keyCode===13){
 
     let auto_end_text=auto_end(event.target.value);
     console.log("ayto text check:",auto_end_text,event.target.value);
@@ -245,15 +244,15 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     current_box.current=row_number+1
     
    
-    }
-    if(event.keyCode===8&&event.target.selectionStart===0&&Number(event.target.id)!==1){
+    }*/
+    /*if(event.keyCode===8&&event.target.selectionStart===0&&Number(event.target.id)!==1){
       
       event.preventDefault();
       let text_box=document.getElementById("text_box")
       let row_number=Number(event.target.id);
       let parent=event.target.parentElement;
       let focus_to_div=document.getElementById(`${row_number-1}`)
-      let text_area_arr=document.querySelectorAll(".texts");
+      let text_area_arr=document.querySelectorAll(`.text-${randomInt}`);
       let row_number_div_arr=document.querySelectorAll(".row_box_num");
       Array.from(text_area_arr).map(x=>{
         if(Number(x.id)>row_number){
@@ -273,115 +272,86 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       focus_to_div.focus();
       //set_current_box(row_number-1)
       current_box.current=row_number-1
-    }
+    }*/
     if(event.keyCode===38&&event.target.selectionStart===0){
-      let nums=Number(event.target.id)-1;
+
+      let nums=event.target.id.split("-");
+      nums=Number(nums[2])-1;
+      //let nums=Number(event.target.id)-1;
       if((nums+1)!==1){
       //set_current_box(nums) 
       current_box.current=nums 
-      console.log(event.target.selectionStart,event.target.selectionEnd);
-      let docs=document.getElementById(`${nums}`)
+
+      
+      //let docs=document.getElementById(`${nums}`)
+      
+      let docs=document.getElementById(`text-${randomInt}-${nums}`)
       docs.focus();}
       else{
-        console.log("시작입니다.")
+ 
+        
       }
       
 
       }
     if(event.keyCode===40&&event.target.selectionStart===event.target.value.length){
-      let nums=Number(event.target.id)+1;
-      let doc_arr=document.getElementsByClassName("texts")
+      let nums=event.target.id.split("-");
+      nums=Number(nums[2])+1;
+      //let nums=Number(event.target.id)+1;
+      let doc_arr=document.getElementsByClassName(`text-${randomInt}`)
       if((nums-1)!==doc_arr.length){
       //set_current_box(nums)
       current_box.current=nums
-      let docs=document.getElementById(`${nums}`)
+      let docs=document.getElementById(`text-${randomInt}-${nums}`)
       docs.focus();
       }
       else{
-        console.log("끝입니다.")
+  
+        
+
       }
 
     }
 
   }
-  const save_text=async (event)=>{
-    let targets=event.target.parentElement.parentElement.children[2].children;
-    let strs=""
-    Array.from(targets).map(x=>{
-      
-      strs+=x.children[1].value+"\n"
-    })
-   
-    //api 로 strs보내기!
-
-    let res_data=await fetching_post__with_token_and_csrf(`${back_end_url}save`,{title:title_input.current.value,content:strs},redirect_handler)
-    
-
-      if(res_data.success){
-
-            console.log("res_data:",res_data);
-            dispatch({type:"Change_Content",content:{content_id:res_data.data.content_id,title:res_data.data.title,content:res_data.data.content,update_time:res_data.data.update_time,email:res_data.data.email}})
-            route.push(`/currentversion/${encodeURIComponent(res_data.data.title)}`)
-          
-      }
-      else{      
-        /*if(res_data.msg===relogin_error_msg){
-          dispatch({type:"Change_User",userdata:{user_id:""}})
-          route.push("/login")
-
-        }*/
-        return ;
-      
-      }
-     return ;
-    
-    }
-
 
 
   useEffect(()=>{
+    //console.log("searbh_box:",current_search_box.popup)
+    //setting_start_text(current_content.content_id)
+    set_random_int(getRandomInt(1,10000))
+
   
-    console.log("edit:",current_user_data);
     svg_url_arr.map((x,idx)=>{
 
       check_in_db("img_store",idx,x,img_useref_list[idx],3)
 
 
     })
-    dispatch(clear_redirect_path());
-    console.log("default_view:",default_view);
+  
+    
 
   },[])
 
 
   useEffect(()=>{
-
-    if(current_redirect_path.path){
-      let x=current_redirect_path.path;
-      dispatch(clear_redirect_path());
-      route.push(x);
-    }
-
-
-  },[current_redirect_path])
+    
+  },[show_preview])
 
 
   const show_border_line=(event,check)=>{
     if(check){
-    event.target.className="texts w-full   overflow-hidden resize-none outline-0 text-[15px] h-fit border-solid border-[1px] border-slate-300"}
+    event.target.className=`text-${randomInt} w-full   overflow-hidden resize-none outline-0 text-[15px] h-fit border-solid border-[1px] border-slate-300`}
     else{
-      event.target.className="texts w-full  overflow-hidden resize-none outline-0 text-[15px] h-fit"
+      event.target.className=`text-${randomInt} w-full  overflow-hidden resize-none outline-0 text-[15px] h-fit`
     }
   }
 
 
 
   return (
-    <div className="flex w-full h-screen  lg:items-center items-start lg:justify-center justify-start ">
+    <div className="flex w-full h-fit  lg:items-center items-start lg:justify-center justify-start ">
     <div className=" flex flex-col  items-center  text-[24px] w-full h-95p">
-      <div className=" text-left h-[75px] flex flex-col justify-center lg:w-90p w-full">
-        <input ref={title_input} className="text-[30px] h-fit w-full outline-none border-solid border-[1px]" placeholder='제목을 입력해주세요'></input>
-      </div>
       <div className="flex justify-center items-center lg:w-90p w-full h-[50px] bg-white border-[1px] border-solid border-b-0">
         <div className="flex w-1/2 h-[25px] mr-[20px]  justify-evenly ">
           <button onClick={()=>show_window()} className="text-[20px]">
@@ -409,27 +379,27 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
 
       {
-        show_preview ?   <DnynamicPreview text={preview_text}/>: 
+        show_preview ?   <DnynamicPreview text={preview_text} nums={randomInt}/> : 
         (
           <div id="text_box" className="flex flex-col lg:w-90p w-full h-55p border-solid border-[1px] overflow-auto ">
 
           { default_view ? 
           
 
-            start_text.map((x,idx)=>(
+            ex_text.map((x,idx)=>(
                 
-                <div key={idx+1} className="row_box my-[1px] flex">
+                <div key={`text-${randomInt}-${idx+1}`} className="row_box my-[1px] flex">
                    <div className="text-center row_box_num w-[50px] h-fit  text-[15px]">
                           {idx+1}
                     </div>
-                <textarea  id={idx+1} spellCheck='false'rows={1}   
+                <textarea  id={`text-${randomInt}-${idx+1}`} spellCheck='false'rows={1}   
                     onInput={(event)=>textarea_auto_sizing(event)}
                     onKeyDown={(event)=>add_row_num(event)}
                     onClick={(event)=>set_current_num(event)}
                     onFocus={(event)=>show_border_line(event,true)}
                     onBlur={(event)=>show_border_line(event,false)}
-                    className="texts w-full resize-none outline-0 overflow-hidden
-                     text-[15px] h-fit"
+                    className={`text-${randomInt} w-full resize-none outline-0 overflow-hidden
+                     text-[15px] h-fit`}
                     defaultValue={x} >    
                 </textarea>
                     
@@ -446,14 +416,14 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
                   <div className="text-center row_box_num w-[50px] h-fit  text-[15px]">
                         {x["id"]}
                   </div>
-                  <textarea  id={x["id"]} spellCheck='false'rows={1}
+                  <textarea  id={`text-${randomInt}-${x["id"]}`} spellCheck='false'rows={1}
                       onInput={(event)=>textarea_auto_sizing(event)} 
                       onKeyDown={(event)=>add_row_num(event)}
                       onClick={(event)=>set_current_num(event)}
                       onFocus={(event)=>show_border_line(event,true)}
                       onBlur={(event)=>show_border_line(event,false)}
                       style={{height:x.height}}
-                      className="texts w-full   resize-none outline-0 text-[15px] h-fit overflow-hidden"
+                      className={`text-${randomInt} w-full  resize-none outline-0 text-[15px] h-fit overflow-hidden`}
                        defaultValue={x["text"]}>    
                   </textarea>
               </div>
@@ -470,9 +440,6 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
           
       )
       }
-      <div className="lg:w-90p w-full flex justify-end ">
-      <button  onClick={(event)=>save_text(event)}className="border-[2px] border-solid rounded-3p border-slate-200 ">저장하기</button>
-      </div>
     </div>
     </div>
   )
@@ -481,4 +448,4 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
 
 
-export default Edit_Main;
+export default Edit_Tutorial;
