@@ -23,15 +23,9 @@ jobs:
       
       - name: Generate Environment Variables File      
         run: |
-          echo "NEXT_PUBLIC_ID_EXIST_SIGN=$NEXT_PUBLIC_ID_EXIST_SIGN" >> .env
-          echo "NEXT_PUBLIC_NONE_MEMBER_SIGN=$NEXT_PUBLIC_NONE_MEMBER_SIGN" >> .env
-          echo "NEXT_PUBLIC_RELOGIN_SIGN=$NEXT_PUBLIC_RELOGIN_SIGN" >> .env
           echo "NEXT_PUBLIC_BACK_END_URL=$NEXT_PUBLIC_BACK_END_URL" >> .env
          
         env:
-          NEXT_PUBLIC_ID_EXIST_SIGN: ${{ secrets.NEXT_PUBLIC_ID_EXIST_SIGN }}
-          NEXT_PUBLIC_NONE_MEMBER_SIGN: ${{ secrets.NEXT_PUBLIC_NONE_MEMBER_SIGN }}
-          NEXT_PUBLIC_RELOGIN_SIGN: ${{ secrets.NEXT_PUBLIC_RELOGIN_SIGN }}
           NEXT_PUBLIC_BACK_END_URL: ${{secrets.NEXT_PUBLIC_BACK_END_URL}}
       - name: Check .env file contents
         run: | 
