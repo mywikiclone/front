@@ -19,7 +19,14 @@ jobs:
       - name: Check Node v
         run: node -v
 
-      - name: Generate Environment Variables File
+      - name: Debug environment variables
+        run: |
+          echo "NEXT_PUBLIC_ID_EXIST_SIGN=${{ secrets.NEXT_PUBLIC_ID_EXIST_SIGN }}"
+          echo "NEXT_PUBLIC_NONE_MEMBER_SIGN=${{ secrets.NEXT_PUBLIC_NONE_MEMBER_SIGN }}"
+          echo "NEXT_PUBLIC_RELOGIN_SIGN=${{ secrets.NEXT_PUBLIC_RELOGIN_SIGN }}"
+          echo "NEXT_PUBLIC_BACK_END_URL=${{ secrets.NEXT_PUBLIC_BACK_END_URL }}"
+      
+      - name: Generate Environment Variables File      
         run: |
           echo "NEXT_PUBLIC_ID_EXIST_SIGN=$NEXT_PUBLIC_ID_EXIST_SIGN" >> .env
           echo "NEXT_PUBLIC_NONE_MEMBER_SIGN=$NEXT_PUBLIC_NONE_MEMBER_SIGN" >> .env
