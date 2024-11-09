@@ -18,7 +18,12 @@ jobs:
 
       - name: Check Node v
         run: node -v
-
+        # Create deployment package with .env file included
+      - name: Create deployment package with .env file included
+        run: |
+          # 모든 숨겨진 파일을 제외하고, .env 파일만 포함하여 압축
+          zip -qq -r deploy-package.zip . -x ".*"  # 모든 숨겨진 파일 제외
+          zip -qq deploy-package.zip .env         # .env 파일을 수동으로 포함
      
       
       #- name: Generate Environment Variables File      
@@ -60,14 +65,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_NEW_SECRET_KEY }}
           aws-region: ap-northeast-2
        #
-      - name: Upload to AWS S3 # AWS S3 에 업로드
-        run: | # 텍스트 블록의 시작
-          aws deploy push \
-            --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
-            --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
-            --ignore-hidden-files \
-            --source .
-
+      #- name: Upload to AWS S3 # AWS S3 에 업로드
+       # run: | # 텍스트 블록의 시작
+        #  aws deploy push \
+         #   --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} \
+          #  --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip \
+           # --ignore-hidden-files \
+            #--source .
+      - name: Upload files to S3
+        run: |
+          aws s3 cp deploy-package.zip s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip  
+      
+     
       - name: Deploy to AWS EC2 from S3 # S3에 올린 것을 EC2로 배포하는 작업
         run: |
           aws deploy create-deployment \
