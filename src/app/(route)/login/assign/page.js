@@ -77,11 +77,18 @@ const Assign_page=()=>{
     const refresh_timer=()=>{
         
         timer.current.textContent="2:00"
+        if(worker_ref.current===null){
+
+            set_auth_code(false);
+            timer_function();
+            return;
+
+        }
         worker_ref.current.terminate();
         worker_ref.current.onmessage=null;
         set_auth_code(false);
         timer_function();
-
+        return;
 
     }
 
@@ -103,12 +110,12 @@ const Assign_page=()=>{
 
 
             if(!email_check){
-                alert("아이디를 체크해주세요")
+                alert("아이디형식을 체크해주세요")
                 return;
             }
           
             if(id_exist){
-                alert("이미 존재하는 회원입니다")
+                alert("아이디 중복 여부를 체크해주세요")
                 return;
             }
           

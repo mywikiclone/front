@@ -9,10 +9,10 @@ import Edit_Tutorial from "./components/editfortutorial";
 
 export default function Home() {
 
-  const backendurl=process.env.NEXT_PUBLIC_BACK_END_URL;
+
 
   useEffect(()=>{
-    console.log("backendurl:",backendurl);
+
   },[])
 
 
