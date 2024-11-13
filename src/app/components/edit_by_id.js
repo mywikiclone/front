@@ -482,7 +482,6 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
   }
 
   useEffect(()=>{
-   
     dispatch(clear_redirect_path());
     setting_start_text(content_id)
     img_useref_list.forEach((x,idx)=>{

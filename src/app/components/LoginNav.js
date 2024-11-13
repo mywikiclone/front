@@ -21,6 +21,7 @@ const LoginNav=()=>{
         set_popup(false)
         let data=await fetching_get_with_token_and_csrf(back_end_url+"logout")
         set_login_status("비로그인")
+        
         localStorage.setItem("csrf-token",JSON.stringify(""));
         usedispatch({type:"Change_User",userdata:{user_id:""}})
     
@@ -57,11 +58,10 @@ const LoginNav=()=>{
 
     const check_login=async()=>{
 
-
+        console.log("logincheck");
 
         let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",{})
-     
-        console.log("datasuccess:",data.success);
+        
         if(data.success){
           
         usedispatch({type:"Change_User",userdata:{user_id:data.data.email}})
@@ -135,10 +135,10 @@ const LoginNav=()=>{
             
 
             <div className="w-full h-fit text-[15px] border-t-[1px] p-[10px]  border-solid border-slate-300">
-            { current_user_data.user_id!=="" ? <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit" href="/" onClick={()=>{logout_func()}} >로그아웃</Link>
+            { current_user_data.user_id!=="" ? <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit mb-[10px]" href="/" onClick={()=>{logout_func()}} >로그아웃</Link>
             <Link className="w-full h-fit text-[15px]" href="/login/forgetpassword" >비밀번호 바꾸기</Link> </div>
-            : <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit" href="/login" onClick={()=>{login_func()}} >로그인</Link>
-            <Link className="w-full h-fit  text-[15px]" href="/login/createpassword" >비밀번호 까먹엇어ㅛ...</Link>
+            : <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit mb-[10px]" href="/login" onClick={()=>{login_func()}} >로그인</Link>
+            <Link className="w-full h-fit  text-[15px]" href="/login/createpassword" >비밀번호 재설정</Link>
             </div>
             
             }

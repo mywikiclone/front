@@ -213,10 +213,9 @@ const Main_Board=({content_title})=>{
                :
                <div className="w-full">
                 <div className="flex w-full h-auto justify-between items-center border-solod border-[2px] border-black">
-                    
-                    
-                    {check_grade ? <div className="w-full h-fit text-[5px]">관리자 권한에의해서 편집이 제한된 문서입니다.</div> : null }
+               
                     <div className=" text-[35px] w-auto h-auto ml-[10px]">
+                    {check_grade ? <div className="w-full h-fit text-[10px]">관리자 권한에의해서 편집이 제한된 문서입니다.</div> : null }
                         {current_content.title}
                         <div className="text-[15px]">
                             <div className="w-fit h-fit flex flex-col">

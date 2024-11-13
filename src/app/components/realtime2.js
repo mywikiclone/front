@@ -104,7 +104,7 @@ const RealTimeAnother=({data_from_rsc})=>{
           </motion.div>
         </AnimatePresence>
         {
-            visible && <div className="w-full h-fit bg-white 
+            visible&&data_from_rsc.length!==0 ? <div className="w-full h-fit bg-white 
             border-solid border-[1px] border-slate-300 z-50">
                 {data_from_rsc.map((x,idx)=>
                     <Link key={idx} href={`/currentversion/${encodeURIComponent(x.title)}`}>
@@ -119,6 +119,7 @@ const RealTimeAnother=({data_from_rsc})=>{
 
                 )}
             </div>
+            : null
         }
     </div>
 

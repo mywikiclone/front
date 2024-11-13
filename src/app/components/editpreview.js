@@ -24,7 +24,7 @@ const change_img=(event)=>{
     }
     useEffect(()=>{
 
-        console.log("nums:",nums);
+     
       
         let doc=document.getElementById("text-box")
         doc.innerHTML=text
@@ -39,34 +39,29 @@ const change_img=(event)=>{
         let sup_hrefs=doc.getElementsByClassName("sup_href");
 
 
-        /*Array.from(sup_hrefs).map((x,idx)=>{
-               
-                let href=x.children[0];
-                console.log("href:",href);
-               // <div class="</div>
-                console.log(x.children[0]);
-                console.log(x.children[0].getAttribute('data-ex'))
-                let divs=document.createElement("div")
-                divs.className="text-[15px] bg-slate-400  text-black border-[1px] border-solid border-slate-300 invisible absolute  left-full top-1/2  transform -translate-y-1/2  z-50"
-                //divs.textContent=x.children[0].getAttribute('data-ex');
-                divs.textContent=x.children[0].getAttribute('data-ex');
-                
-                x.appendChild(divs);
-                
-                href.addEventListener("mouseover",()=>{
-
-                    divs.classList.remove("invisible");
-
-                })
-                href.addEventListener("mouseout",()=>{
-
-                    divs.classList.add("invisible");
-
-                })
+        Array.from(sup_hrefs).map((x,idx)=>{
+            let text=x.children[0].getAttribute('data-ex')
+            let divs=document.createElement("div")
+            console.log("Text:",text);
+            divs.className="text-[15px] w-[300px]  bg-slate-100 h-fit p-[10px] text-black border-[1px] border-solid border-slate-300 invisible absolute bottom-[25px] z-50"
+           
+            divs.textContent=x.children[0].getAttribute('data-ex');
 
 
+            x.appendChild(divs);
 
-        })*/
+
+            x.addEventListener("mouseover",()=>{
+                console.log("over");
+                divs.classList.remove("invisible");
+
+            })
+            x.addEventListener("mouseout",()=>{
+                console.log("out");
+                divs.classList.add("invisible");
+
+            })
+        })
 
 
         Array.from(big_areas).map(x=>{

@@ -8,7 +8,7 @@ const cant_find_error_sign=process.env.NEXT_PUBLIC_CANT_FIND_ERROR;
 const etc_error_sign=process.env.NEXT_PUBLIC_ETC_ERROR_SIGN;
 const no_data_error=process.env.NEXT_PUBLIC_NO_DATA_ERROR;
 const admin_error_msg=process.env.NEXT_PUBLIC_ADMIN_ERROR;
-
+const excced_sign=process.env.NEXT_PUBLIC_EXCEED_ACCESS_SIGN;
 
 const Response_switch_handler=(data,handle_redirect)=>{
     /*let dispatch=useDispatch();
@@ -25,6 +25,10 @@ const Response_switch_handler=(data,handle_redirect)=>{
         case id_exist_sign:
             return {success:false,msg:data.msg,data:data.data};
 
+            
+        case excced_sign:
+            alert("로그인 횟수를 초과했습니다.기다리고 나서 시도해주세요");
+            return {success:false,msg:data.msg,data:data.data};
 
 
         case cant_find_error_sign:
@@ -178,15 +182,15 @@ export const fetching_get_with_token=async (url,handle_redirect)=>{
 
 
 export const fetching_get_with_token_and_csrf=async (url,handle_redirect)=>{
-
    
-    let csrf=JSON.parse(localStorage.getItem("csrf-token"));
+    let csrf=localStorage.getItem("csrf-token");
+    console.log("csrf:",csrf);
 
     let data=await fetch(url,{
         method:"GET",
         headers:{
             "Content-Type":"application/json",
-            "Csrf_Check":csrf
+            "Csrf_check":csrf
         },
         credentials:"include"
     })
@@ -228,12 +232,12 @@ export const fetching_post__with_token=async (url,data_to_transfer,handle_redire
 
 export const fetching_post__with_token_and_csrf=async (url,data_to_transfer,handle_redirect)=>{
 
-    let csrf=JSON.parse(localStorage.getItem("csrf-token"));
+    let csrf=localStorage.getItem("csrf-token");
     let data=await fetch(url,{
         method:"POST",
         headers:{
             'Content-Type':"application/json",
-            "Csrf_Check":csrf
+            "Csrf_check":csrf
           
         },
         body:JSON.stringify(data_to_transfer)
@@ -271,9 +275,9 @@ export const fetching_post__with_token_forlogin=async (url,data_to_transfer,hand
         const headers=data.headers;
       
 
-        const csrf=headers.get("Csrf_Check");
+        const csrf=headers.get("Csrf_check");
       
-        localStorage.setItem("csrf-token",JSON.stringify(csrf))
+        localStorage.setItem("csrf-token",csrf)
         
        
 

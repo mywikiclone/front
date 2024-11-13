@@ -37,12 +37,14 @@ module.exports = {
       },
       maxWidth: {
         '90p': '90%', // 새로운 max-width 설정
-        '300p':"300px"
+        '300p':'300px',
+        '500p':'500px'
       },
       minHeight:{
         '40p':'40px'
       },      
       minWidth:{
+        '100p':'100px',
         '150p':'150px',
         '300p':'300px'
       },
