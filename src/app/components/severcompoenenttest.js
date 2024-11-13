@@ -3,7 +3,7 @@ const RealTime2=async ()=>{
 
 //서버컴포넌트는 절대적경로만 필요ㅗ 서버에서 실행되니까
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL
-   let data=await fetch("http://mywikiback.shop/realtime",{
+   let data=await fetch("https://mywikiback.shop/realtime",{
             //http://ec2-13-125-63-133.ap-northeast-2.compute.amazonaws.com
             method:'GET',
             //
