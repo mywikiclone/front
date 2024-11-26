@@ -5,7 +5,7 @@ import { motion,AnimatePresence } from 'framer-motion';
 const RealTimeAnother=({data_from_rsc})=>{
 
 
-    c
+    
 
     let idx=useRef(0)
     let doc_obj=useRef(null)
