@@ -4,7 +4,7 @@ import RealTimeAnother from "./realtime2";
 
 
 
-const RealTime2=async (props)=>{
+const RealTime2=async ()=>{
 
 //서버컴포넌트는 절대적경로만 필요ㅗ 서버에서 실행되니까
    
@@ -51,7 +51,7 @@ const RealTime2=async (props)=>{
         <div className="relative flex justify-start bg-white w-full h-[35px] ">
         {
              <div className="w-full bg-white">
-                    <RealTimeAnother data_from_rsc={data} props={props}/>
+                    <RealTimeAnother data_from_rsc={data} />
             </div>
         }
     </div>

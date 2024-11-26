@@ -2,10 +2,10 @@
 import Link from "next/link";
 import { useRef,useEffect,useState } from "react"
 import { motion,AnimatePresence } from 'framer-motion';
-const RealTimeAnother=({data_from_rsc,props})=>{
+const RealTimeAnother=({data_from_rsc})=>{
 
 
-    console.log("props:",props)
+    c
 
     let idx=useRef(0)
     let doc_obj=useRef(null)
