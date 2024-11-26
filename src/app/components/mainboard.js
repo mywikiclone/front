@@ -122,7 +122,7 @@ const Main_Board=({content_title})=>{
         //{content_id,title,content 로구성됨.}
 
         dispatch({type:"Change_Content",content:{content_id:data.content_id,title:data.title,content:data.content,email:data.email,update_time:data.update_time,grade:data.grade}})
-        set_admin(data.grade);
+        //set_admin(data.grade);
         }
         
         else{
@@ -161,31 +161,22 @@ const Main_Board=({content_title})=>{
       //let strs=data.content.split("\n");
       
       let strs=current_content.content.split("\n");
-      console.log("저장된값:",strs);
+    
       strs=show_window(strs);
-      //console.log("current_content:",current_content);
+    
+      console.log("grade:",current_content.grade);
+      console.log("strs:",strs)
+      set_admin(current_content.grade);
       doc.innerHTML=strs;
 
-      /*let docs=doc.getElementsByClassName("big_area");
-      Array.from(docs).map(x=>{
-          let header_ul=x.children[0];
-
-          header_ul.addEventListener("click",change_img);
-          if(doc.getElementsByClassName("small_area")!==null){
-              let docs2=doc.getElementsByClassName("small_area")
-              Array.from(docs).map((y)=>{
-                  let header_ul=y.children[0];
-                  header_ul.addEventListener("click",change_img)
-              })
-          }
-      })*/
+  
           let big_areas=doc.getElementsByClassName("big_area");
        
 
           let small_areas=doc.getElementsByClassName("small_area")
           
   
-          //let sup_hrefs=doc.getElementsByClassName("sup_href");
+      
 
   
           Array.from(big_areas).map(x=>{

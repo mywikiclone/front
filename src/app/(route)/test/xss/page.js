@@ -1,4 +1,7 @@
 "use client"
+
+import { useEffect } from "react";
+import { fetching_get_with_no_token } from "@/app/components/fetching";
 const Xss=()=>{
 
     const testxss=()=>{
@@ -7,6 +10,11 @@ const Xss=()=>{
         console.log(ints.value);
         test.innerHTML=ints.value;
     }
+
+    const handle_redirect=()=>{
+
+    }
+  
 
 
     return(

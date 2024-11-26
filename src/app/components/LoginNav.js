@@ -60,6 +60,7 @@ const LoginNav=()=>{
 
         console.log("logincheck");
 
+
         let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",{})
         
         if(data.success){

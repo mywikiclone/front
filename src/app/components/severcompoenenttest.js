@@ -1,10 +1,15 @@
 import RealTimeAnother from "./realtime2";
-const RealTime2=async ()=>{
+
+
+
+
+
+const RealTime2=async (props)=>{
 
 //서버컴포넌트는 절대적경로만 필요ㅗ 서버에서 실행되니까
-    const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL
-   let data=await fetch("https://mywikiback.shop/realtime",{
-            //http://ec2-13-125-63-133.ap-northeast-2.compute.amazonaws.com
+   
+   let data=[]/*(await fetch("https://localhost:8080/realtime",{
+            //https://mywikiback.shop/realtime
             method:'GET',
             //
             next:{revalidate:60,dynamic:"auto"},
@@ -32,9 +37,10 @@ const RealTime2=async ()=>{
 
             data=[]
            
-        }
+        }*/
 
-   
+
+            
       
 
 
@@ -45,7 +51,7 @@ const RealTime2=async ()=>{
         <div className="relative flex justify-start bg-white w-full h-[35px] ">
         {
              <div className="w-full bg-white">
-                    <RealTimeAnother data_from_rsc={data}/>
+                    <RealTimeAnother data_from_rsc={data} props={props}/>
             </div>
         }
     </div>

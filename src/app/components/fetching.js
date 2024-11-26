@@ -27,7 +27,7 @@ const Response_switch_handler=(data,handle_redirect)=>{
 
             
         case excced_sign:
-            alert("로그인 횟수를 초과했습니다.기다리고 나서 시도해주세요");
+
             return {success:false,msg:data.msg,data:data.data};
 
 

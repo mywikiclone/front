@@ -163,8 +163,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       let beforevalue=txtvalue.substring(0,cursorposition);
       let aftervalue=txtvalue.substring(cursorposition,txtvalue.length);
     
-      console.log("txtvalue:",txtvalue)
-      console.log("cursorposition:",cursorposition)
+  
       beforevalue+=tags_for_edit[strs];
   
   
@@ -210,7 +209,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     let reg_exp_small_title=/=-=.*?=-=/
     let intro_free_box_pattern=/====.*?====/g;
 
-    console.log("ayto_end_text:",text);
+    
 
 
     if(text.match(intro_free_box_pattern)!=null&&text.split("====")[1]!=="끝"){
@@ -292,7 +291,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
     if(event.keyCode===13){
 
     let auto_end_text=auto_end(event.target.value);
-    console.log("ayto text check:",auto_end_text,event.target.value);
+    
     event.preventDefault();
    
     let row_number=Number(event.target.id);
@@ -346,13 +345,10 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       if((nums+1)!==1){
       //set_current_box(nums) 
       current_box.current=nums 
-      console.log(event.target.selectionStart,event.target.selectionEnd);
+      
       let docs=document.getElementById(`${nums}`)
       docs.focus();}
-      else{
-        console.log("시작입니다.")
-      }
-      
+  
 
       }
     if(event.keyCode===40&&event.target.selectionStart===event.target.value.length){
@@ -364,10 +360,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       let docs=document.getElementById(`${nums}`)
       docs.focus();
       }
-      else{
-        console.log("끝입니다.")
-      }
-
+   
     }
 
   }
@@ -378,7 +371,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       
       strs+=x.children[1].value+"\n"
     })
-    console.log("업데이트 되는값:",strs);
+  
     //api 로 strs보내기!
 
     let title_to_save=titles;
@@ -425,8 +418,8 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
 
    let datas="";
     if(id!==current_content.content_id){
-      console.log("id:",id,typeof(id))
-      console.log("id2:",current_content.content_id,typeof(current_content.content_id));
+  
+      
 
       datas=await fetching_get_with_no_token(`${back_end_url}search/id/${id}`,redirect_handler)
 

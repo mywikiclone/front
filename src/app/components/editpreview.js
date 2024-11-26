@@ -43,7 +43,7 @@ const change_img=(event)=>{
             let text=x.children[0].getAttribute('data-ex')
             let divs=document.createElement("div")
             console.log("Text:",text);
-            divs.className="text-[15px] w-[300px]  bg-slate-100 h-fit p-[10px] text-black border-[1px] border-solid border-slate-300 invisible absolute bottom-[25px] z-50"
+            divs.className="text-[15px] w-[300px] break-words  bg-slate-100 h-fit p-[10px] text-black border-[1px] border-solid border-slate-300 invisible absolute bottom-[25px] z-50"
            
             divs.textContent=x.children[0].getAttribute('data-ex');
 

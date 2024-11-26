@@ -5,11 +5,14 @@ import RealTimeIssue from "./components/realtimeissuse";
 import Search_box from "./components/search_box";
 import NavBtn from "./components/navbtns";
 import RealTime2 from "./components/severcompoenenttest";
-import updownbtn from "./components/updownbtn";
+
 import Updownbtn from "./components/updownbtn";
-import LoginNav from "./components/LoginNav";
+
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 import Error from "./error";
+import Chatting from "./components/livechatting";
+
+
 const x=""
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,6 +21,9 @@ const inter = Inter({ subsets: ["latin"] });
 //d아래처럼 감싸도 같은 store를 공유하며 redux상태값이 업데이트될떄리랜더링되는 애들은
 //useselector로 해당값을 참조하는 애들만 해당된다 ㅇㅇ
 const RootLayout=({children})=>{
+
+
+ 
 return (
     <html lang="en">
       <body className={inter.className}>
@@ -82,6 +88,11 @@ return (
           </div>  
       </div>
       </div>
+      
+      <div className="w-[300px] h-auto fixed  right-[40px]  bottom-[120px] z-50 lg:block hidden">
+ 
+      <Chatting/>
+      </div>
   
       </Providers>
 
@@ -97,7 +108,7 @@ return (
 }
 
 export default RootLayout
-//<Search_box />
+// <Search_box />
 //
 /*
           <div className="lg:block hidden">

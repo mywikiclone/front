@@ -11,6 +11,7 @@ const AdminPage=()=>{
     const router=useRouter()
     const dispatch=useDispatch();
     const backendurl=process.env.NEXT_PUBLIC_BACK_END_URL;
+    let current_content=useSelector((state)=>state.current_content);
     const current_redirect_path=useSelector((state)=>state.current_redirect_path);
     const user_data_window=useRef(null);
     const content_data_window=useRef(null);
@@ -162,7 +163,7 @@ const AdminPage=()=>{
         event.preventDefault();
     
         change_btn.current="대기중..."
-        let data= await  fetching_post__with_token_and_csrf(`${backendurl}admin/contentadmin`,{content_id:finded_content_data.content_id,grade:event.target.content.value},handle_redirect)
+        let data= await  fetching_post__with_token_and_csrf(`${backendurl}admin/changecotent`,{content_id:finded_content_data.content_id,grade:event.target.content.value},handle_redirect)
        if(!data.success){
 
 
@@ -183,6 +184,12 @@ const AdminPage=()=>{
            change_btn.current="변경"
            return;
        }
+
+
+       dispatch({type:"Change_Content",content:{
+        ...current_content,
+        grade:event.target.content.value
+        }})
 
        set_admin(false);
        set_finded_content_data({...finded_content_data,grade:event.target.content.value})

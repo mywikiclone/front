@@ -99,7 +99,7 @@ const Search_box=()=>{
 
 
     const click_search_submit=(event)=>{
-        console.log("click_search_submit")
+        
         searchbox.current.value="";
         setpopup(false);
         router.push(`/currentversion/${encodeURIComponent(event.target.textContent)}`)
@@ -113,7 +113,7 @@ const Search_box=()=>{
 
     const handle_change=(e)=>{
         let value=e.target.value;
-        console.log("change_Value:",value);
+       
         if(value!==""){
         
         search_event(value);
@@ -128,17 +128,19 @@ const Search_box=()=>{
 
     }
     const random_search_event=async()=>{
-        console.log("랜덤문서")
+       
   
         let data=await fetching_get_with_no_token(`${back_end_url}random`,redirect_handler)
         if(data.success){
   
-
-            dispatch({type:"Change_Content",content:{content_id:data.content_id,title:data.title,content:data.content,email:data.email,update_time:data.update_time}})
+            
+            const {create_time,...rest}=data.data;
+            console.log("random:",rest);
+            dispatch({type:"Change_Content",content:{...rest}})
  
             setpopup(false)
   
-          router.push(`/currentversion/${data.title}`) 
+          router.push(`/currentversion/${data.data.title}`) 
   
         }
         else{
@@ -147,7 +149,7 @@ const Search_box=()=>{
 
 
 
-          console.log("랜덤할게없내요..?")
+         
         }
         
   
