@@ -27,6 +27,7 @@ const ChangeLongs=()=>{
         if(data.success){
         let msg=data.msg;
         data=data.data;
+        console.log("data:",data);
         set_button_state(msg,current_page);
         console.log(msg===last_page_sign);
         set_current_logs(data)}

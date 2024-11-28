@@ -74,30 +74,8 @@ const Topic=({topic_id})=>{
 
                 else{
 
-                   /* if(data.msg===reqlogin_msg){
-
-                        dispatch({type:"Change_User",userdata:{user_id:""}})
-                        router.push("/login")
-                    }*/
-
-
-
                     set_error(false);
-                    /*if(data.msg===reqlogin_msg){
-                        setTimeout(()=>{save_btn.current.disabled=false
-                            
-                        },1000)
-                        dispatch({type:"Change_user",userdata:{user_id:""}})
-                        router.push("/login")
-                        return ;
-                    
-                    }*/
-
-                    //alert("모종의이유로실패")
-                    /*setTimeout(()=>{save_btn.current.disabled=false
-                                
-                    },1000)
-                    */
+             
                 }
     
             
@@ -232,7 +210,7 @@ const Topic=({topic_id})=>{
 
         let data= await fetching_get_with_no_token(`${back_end_url}getcomments/${topic_id}`,redirect_handler)
 
-        if(data.success){
+        if(data.success&&data.data.length>0){
             
             console.log("success");
   

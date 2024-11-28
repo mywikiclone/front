@@ -3,10 +3,11 @@ const relogin_sign=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
 const id_exist_sign=process.env.NEXT_PUBLIC_ID_EXIST_SIGN
 const member_no_sign=process.env.NEXT_PUBLIC_NONE_MEMBER_SIGN;
 const csrf_error_sign=process.env.NEXT_PUBLIC_CSRF_ERROR_SIGN;
-const email_send_fail_sign=process.env.NEXT_PUBLIC_SEND_FAIL;
+
 const cant_find_error_sign=process.env.NEXT_PUBLIC_CANT_FIND_ERROR;
 const etc_error_sign=process.env.NEXT_PUBLIC_ETC_ERROR_SIGN;
-const no_data_error=process.env.NEXT_PUBLIC_NO_DATA_ERROR;
+
+
 const admin_error_msg=process.env.NEXT_PUBLIC_ADMIN_ERROR;
 const excced_sign=process.env.NEXT_PUBLIC_EXCEED_ACCESS_SIGN;
 
@@ -32,7 +33,7 @@ const Response_switch_handler=(data,handle_redirect)=>{
 
 
         case cant_find_error_sign:
-        case no_data_error:
+            alert("찾을수 없는 자료입니다")
             return {success:false,msg:data.msg,data:data.data};
 
         case admin_error_msg:

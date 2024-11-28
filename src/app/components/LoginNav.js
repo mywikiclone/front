@@ -6,8 +6,7 @@ import Login from "./login";
 
 import { useSelector,useDispatch } from "react-redux";
 import { fetching_get_with_token,fetching_get_with_no_token, fetching_post__with_token_forlogin, fetching_get_with_token_and_csrf } from "./fetching";
-
-
+import { useRouter } from "next/navigation";
 
 const LoginNav=()=>{
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
@@ -15,7 +14,9 @@ const LoginNav=()=>{
     let [login_status,set_login_status]=useState("비로그인");
     const usedispatch=useDispatch();
     const current_user_data=useSelector((state)=>state.current_userdata)
-   
+    const handle_redirect=(text)=>{
+
+    }
     const current_pop_up=useRef(null);
     const logout_func=async ()=>{
         set_popup(false)
@@ -26,7 +27,7 @@ const LoginNav=()=>{
         usedispatch({type:"Change_User",userdata:{user_id:""}})
     
 
-
+       
 
        
     }
@@ -58,10 +59,7 @@ const LoginNav=()=>{
 
     const check_login=async()=>{
 
-        console.log("logincheck");
-
-
-        let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",{})
+        let data=await fetching_post__with_token_forlogin(back_end_url+"checkloginstate",handle_redirect)
         
         if(data.success){
           
@@ -120,8 +118,6 @@ const LoginNav=()=>{
     
     },[popup])
 
-
-
     return(
         <div className="relative">
             
@@ -133,8 +129,7 @@ const LoginNav=()=>{
             <div className="w-full h-fit p-[10px] text-[15px]">{login_status}</div> 
             
             <div className="w-full h-fit p-[10px]  text-[15px]">설정</div> 
-            
-
+       
             <div className="w-full h-fit text-[15px] border-t-[1px] p-[10px]  border-solid border-slate-300">
             { current_user_data.user_id!=="" ? <div className="w-full h-fit flex flex-col"><Link className="w-full h-fit mb-[10px]" href="/" onClick={()=>{logout_func()}} >로그아웃</Link>
             <Link className="w-full h-fit text-[15px]" href="/login/forgetpassword" >비밀번호 바꾸기</Link> </div>

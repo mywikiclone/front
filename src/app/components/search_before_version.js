@@ -9,13 +9,21 @@ const Search_before_version=({id})=>{
     const dispatch=useDispatch();
     
     const [error,set_error]=useState(false);
-    const [content_id,set_content_id]=useState(0);
+   
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
-    const relogin_sign=process.env.NEXT_PUBLIC_RELOGIN_SIGN;
+   
     const router=useRouter();
-    
-    const [change_text,set_change_text]=useState("nothing");
-    const [change_title,set_change_title]=useState("title");
+    let  [current_content,set_current_content]=useState({
+        content_id:0,
+        title:'title',
+        content:'text',
+        update_time:'date',
+        email:'email',
+        grade:'grade'
+
+
+    });
+
     const current_redirect_path=useSelector((state)=>state.current_redirect_path);
     //fetch 문으로 글 내용을 가져오는 과정-->추후에작성
     
@@ -26,12 +34,8 @@ const Search_before_version=({id})=>{
 
 
     }
-    const revert_text=async (event)=>{
-        
-        console.log(event.target.parentElement.parentElement.children[1].value)
-        let text=event.target.parentElement.parentElement.children[1].value
-        let title=event.target.parentElement.parentElement.children[0].textContent
-        let response=await fetching_post__with_token_and_csrf(`${back_end_url}update`,{content_id:content_id,title:title,content:text},redirect_handler)
+    const revert_text=async (event)=>{      
+        let response=await fetching_post__with_token_and_csrf(`${back_end_url}update`,{content_id:current_content.content_id,title:current_content.title,content:current_content.content},redirect_handler)
         /*if(response.msg===relogin_sign){
            
             dispatch({type:"Change_User",userdata:{user_id:""}})
@@ -40,15 +44,28 @@ const Search_before_version=({id})=>{
 
         }*/
        if(response.success){
-        
+        dispatch({type:"Change_Content",content:{
+            content_id:current_content.content_id,
+            title:current_content.title,
+            content:current_content.content,
+            update_time:response.data,
+            email:current_content.email,
+            grade:current_content.grade
+            }})
+  
        
-        router.push(`/currentversion/${title}`)
+
+
+
+
+
+        router.push(`/currentversion/${current_content.title}`)
         }
 
         else{
 
 
-            alert("권한부족 혹은 알수없는 오류입니다");
+            //alert("권한부족 혹은 알수없는 오류입니다");
 
             set_error(false);
             /*if(response.msg===relogin_sign){
@@ -72,9 +89,9 @@ const Search_before_version=({id})=>{
         let data=await fetching_get_with_no_token(`${back_end_url}changelog/${id}`,redirect_handler)
         console.log("data:",data);
         if(data.success){
-            set_change_text(data.data.content);
-            set_change_title(data.data.title)
-            set_content_id(data.data.content_id)
+
+            set_current_content(data.data);
+         
             console.log("콘텐트id:",data.data.content_id)
 
 
@@ -107,9 +124,9 @@ const Search_before_version=({id})=>{
             {error ? <Nothing/> :
 
             <div className=" flex flex-col  items-center  text-[24px] w-full h-95p">
-                <div className="lg:w-90p w-full text-left h-[75px] border-solid border-[1px] border-b-0 text-[50px]">{change_title}</div>
+                <div className="lg:w-90p w-full text-left h-[75px] border-solid border-[1px] border-b-0 text-[50px]">{current_content.title}</div>
                 <textarea  disabled className="lg:w-90p w-full text-left h-70p border-solid border-[1px] resize-none overflow-auto text-[20px]"
-                value={change_text}>
+                value={current_content.content}>
                                            
                 </textarea>
                 <div className="flex lg:w-90p w-full  h-auto justify-end">

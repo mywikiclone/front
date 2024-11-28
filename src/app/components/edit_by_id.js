@@ -399,7 +399,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
       else{
 
 
-        alert("권한부족 혹은 알수없는 오류입니다");
+       // alert("권한부족 혹은 알수없는 오류입니다");
 
         /*if(res_data.msg===relogin_error_msg){
           dispatch({type:"Change_User",userdata:{user_id:""}})

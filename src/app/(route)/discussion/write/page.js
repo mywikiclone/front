@@ -13,6 +13,7 @@ const MakeDiscussion=()=>{
     let subject_title=useRef(null);
     let days=useRef(null)
     let back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
+    const number_regex=/^\d+$/;
     let router=useRouter();
     let usedispatch=useDispatch();
     let introduction_texts=useRef(null)
@@ -31,10 +32,14 @@ const MakeDiscussion=()=>{
     
 
         title_to_send=title_to_send;
-        introduction_texts=introduction_texts.current.value;
-        subject_title=subject_title.current.value.trim()
-        let deadline=days.current.value.trim()
-        let data=await fetching_post__with_token_and_csrf(`${back_end_url}topicsave`,{topic_title:title_to_send,subject_title:subject_title,deadline:deadline,introduction_text:introduction_texts},redirect_handler)
+        let introduction_text=introduction_texts.current.value;
+        let subject_titles=subject_title.current.value.trim()
+        let deadline= (days.current.value.match(number_regex)!==null&&60>Number(days.current.value)>0) ? days.current.value.trim() : "0"
+        console.log("deadline:",deadline,days.current.value);
+
+
+
+        let data=await fetching_post__with_token_and_csrf(`${back_end_url}topicsave`,{topic_title:title_to_send,subject_title:subject_titles,deadline:deadline,introduction_text:introduction_text},redirect_handler)
 
 
         if(data.success){
@@ -43,12 +48,7 @@ const MakeDiscussion=()=>{
             router.push(`/discussion/${data.data.topic_id}`)
         }
         else{
-            /*if(data.msg===relogin_sign){
-
-
-                usedispatch({type:"Change_User",userdata:{user_id:""}})
-                router.push("/login")
-            }*/
+    
             return ;
 
 
@@ -86,7 +86,7 @@ const MakeDiscussion=()=>{
 
 
                 <div className="w-[300px] flex flex-col items-end">
-                <input type="text" className="w-full outline-none border-solid border-[1px] border-slate-300 rounded-sm mb-[10px]" ref={days} placeholder="일단위로 데드라인"></input>  
+                <input type="text" className="w-full outline-none border-solid border-[1px] border-slate-300 rounded-sm mb-[10px]" ref={days} placeholder="분단위로 데드라인 최대 1시간"></input>  
 
                 <textarea ref={introduction_texts} maxlength="250" className="w-full h-[200px] outline-none resize-none border-[1px] border-slate-300 rounded-sm  mb-[10px]" placeholder="간단한 토론 소개글"></textarea> 
                

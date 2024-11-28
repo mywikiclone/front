@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 import { Client } from '@stomp/stompjs';
 import SockJS from "sockjs-client";
 import { useRouter } from "next/navigation";
-
+import { fetching_get_with_token_and_csrf } from "./fetching";
+import { useDispatch } from "react-redux";
 const Chatting=()=>{
     const router=useRouter();
     const [messages, setMessages] = useState([]);
@@ -17,6 +18,8 @@ const Chatting=()=>{
     const [count_num,set_count_num]=useState(0);
     const text_area=useRef(null);
     const [another_access,set_another_access]=useState(false);
+    const usedispatch=useDispatch();
+    const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
     useEffect(() => {
         const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
         if(user_data.user_id===""){
@@ -46,8 +49,8 @@ const Chatting=()=>{
 
                 });
 
-                stompClient.subscribe(`topic/${user_data.user_id}`,(msg)=>{
-                    console.log("로그인감지")
+                stompClient.subscribe(`/topic/${user_data.user_id}`,(msg)=>{
+                    console.log("로그인감지:",msg)
                     set_another_access(true);
 
 
@@ -76,9 +79,12 @@ const Chatting=()=>{
     }, [user_data]);
 
 
+    
     const try_logout=async ()=>{
+        stompClient.deactivate();
+        let data=await fetching_get_with_token_and_csrf(back_end_url+"logout") 
         alert("다른 환경에서 로그인하였습니다.")
-        let data=await fetching_get_with_token_and_csrf(back_end_url+"logout")        
+
         localStorage.setItem("csrf-token",JSON.stringify(""));
         usedispatch({type:"Change_User",userdata:{user_id:""}})
 
@@ -90,8 +96,8 @@ const Chatting=()=>{
 
     useEffect(()=>{
         if(another_access){
-           
-            stompClient.deactivate();
+            console.log("다른환경 로그인감지 로그아웃시도");
+            
             try_logout();
 
 
@@ -105,20 +111,46 @@ const Chatting=()=>{
 
 
     useEffect(()=>{
+        if(text_area.current){
+            text_area.current.scrollTop=text_area.current.scrollHeight;
+        }
+
+
         if(open){
             set_count_num(count_num+1);
             return ;
         }
+        
+
     },[messages])
 
+    useEffect(()=>{
+        if(!open&&text_area.current!==null){
+
+            text_area.current.scrollTop=text_area.current.scrollHeight;
+
+        }
+
+
+    },[open])
+
     const find_enter=(event)=>{
+        if(event.target.value===""){
+
+            event.preventDefault();
+            return ;
+        }
+
+
         if(event.keyCode===13){
             event.preventDefault();//이거 textarea에쓰면 지금 enter키코드 13일떄 즉 enter가들어올때 줄바꿈을 방지
             
             sendMessage();
+
+            return ;
         }
 
-        return ;
+        
     }
 
     const sendMessage = () => {

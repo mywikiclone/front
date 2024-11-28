@@ -17,18 +17,19 @@ const Assign_page=()=>{
     let Password=useRef(null);
     let PasswordCheck=useRef(null);
     let event_mem=useRef(null);
+    let event_mem2=useRef(null);
     let check_password_text=useRef(null);
     let id_check_text=useRef(null);
     let [password_check,set_password_check]=useState(false);
+    let [origin_password_check,set_origin_password_check]=useState(false);
     let [email_check,set_email_check]=useState(false);
     let [auth_code,set_auth_code]=useState(false);
     let [id_exist,set_id_exist]=useState(true);
     let [id,set_id]=useState("")
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     const back_end_url=process.env.NEXT_PUBLIC_BACK_END_URL;
-    const id_exist_msg=process.env.NEXT_PUBLIC_ID_EXIST_SIGN;
-
-
+    const password_regex=/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@!]).+$/;
+    const check_origin_password_text=useRef(null);
     const handle_redirect=(text)=>{
         
     }
@@ -204,9 +205,43 @@ const Assign_page=()=>{
 
 
     
+    const password_validation2=()=>{
+        if(PasswordCheck.current.value!==""){
+            
+        
+            if(event_mem2.current!==null){
+            
+                clearTimeout(event_mem.current);
+            }
     
+            event_mem2.current=setTimeout(()=>{check_password2(PasswordCheck.current.value)},300)
+
+           // console.log(event_mem.current)
+        }
+        else{
+            set_password_check(false);
+        }
+
+
+    }
+
+    
+    const check_password2=(text)=>{
+        if(14>text.length>0&&text.match(password_regex)!==null){
+                set_origin_password_check(true)
+                check_origin_password_text.current.classList.add("invisible")
+        }
+        else{
+            set_origin_password_check(false)
+            check_origin_password_text.current.classList.remove("invisible")
+        }
+
+
+    }
+
+
     const check_password=(text)=>{
-        if(text!==PasswordCheck.current.value){
+        if(text!==PasswordCheck.current.value||!origin_password_check){
 
             check_password_text.current.classList.remove("invisible")
             set_password_check(false);
@@ -317,18 +352,16 @@ const Assign_page=()=>{
                 </div>
 
 
-
-
-
-                <div className="flex flex-col w-[400px] h-fit text-[15px] mb-[15px]">
+                <div className="flex flex-col w-[400px] h-fit text-[15px] mb-[5px]">
                     <div className="mb-[5px]">Password</div>
-                    <input className="outline-none  border-solid border-slate-300 border-[1px] rounded" type="password" ref={Password}></input>
+                    <input ref={PasswordCheck} className="outline-none  border-solid border-slate-300 border-[1px] rounded" type="password"    onChange={()=>password_validation2()}></input>
+                    <div ref={check_origin_password_text} className="text-[15px] text-red-400 invisible w-fit h-fit">비밀번호 길이초과 혹은 특수,영문자,숫자가 포함되지않았습니다.</div>
                 </div>
 
                 
                 <div className="flex flex-col w-[400px] h-fit text-[15px]">
                     <div className="mb-[5px] w-fit h-fit"> 비밀번호 일치 체크</div>
-                    <input ref={PasswordCheck} className="outline-none  border-solid border-slate-300 border-[1px] rounded" onChange={()=>password_validation()}  type="password"></input>
+                    <input ref={Password} className="outline-none  border-solid border-slate-300 border-[1px] rounded" onChange={()=>password_validation()}  type="password"></input>
                     <div  ref={check_password_text} className="text-[15px] text-red-400 invisible w-fit h-fit">비밀번호가 비었거나 일치하지 않습니다.</div>
                 </div>
                 

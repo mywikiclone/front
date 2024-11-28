@@ -8,7 +8,7 @@ const RealTime2=async ()=>{
 
 //서버컴포넌트는 절대적경로만 필요ㅗ 서버에서 실행되니까
    
-   let data=[]/*(await fetch("https://localhost:8080/realtime",{
+   let data=await fetch("https://mywikiback.shop/realtime",{
             //https://mywikiback.shop/realtime
             method:'GET',
             //
@@ -37,7 +37,7 @@ const RealTime2=async ()=>{
 
             data=[]
            
-        }*/
+        }
 
 
             

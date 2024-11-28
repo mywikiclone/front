@@ -325,11 +325,7 @@ const svg_url_arr=["public/italic.svg","public/bold.svg","public/strike.svg"]
           
       }
       else{      
-        /*if(res_data.msg===relogin_error_msg){
-          dispatch({type:"Change_User",userdata:{user_id:""}})
-          route.push("/login")
-
-        }*/
+    
         return ;
       
       }
