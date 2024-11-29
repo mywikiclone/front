@@ -244,8 +244,7 @@ export const fetching_post__with_token_and_csrf=async (url,data_to_transfer,hand
         body:JSON.stringify(data_to_transfer)
         ,credentials:"include"
     })
-
-
+  
     data=await data.json();
 
     
