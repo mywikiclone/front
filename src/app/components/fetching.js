@@ -238,7 +238,8 @@ export const fetching_post__with_token_and_csrf=async (url,data_to_transfer,hand
         method:"POST",
         headers:{
             'Content-Type':"application/json",
-            "Csrf_check":csrf
+            "Csrf_check":csrf,
+            "Testing":"test"
           
         },
         body:JSON.stringify(data_to_transfer)
